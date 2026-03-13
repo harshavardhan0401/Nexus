@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview An AI agent that recommends footwear based on user preferences.
@@ -9,73 +10,75 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
+import { getPlaceholderImage } from '@/lib/placeholder-images';
 
 const mockCatalog = [
   {
-    id: '1',
+    id: 'vapor-max-x',
     name: 'Vapor Max-X',
     description: 'Advanced propulsion system with reactive cushioning for ultimate speed.',
     price: 12999,
-    imageUrl: 'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=600&q=80',
+    imageUrl: getPlaceholderImage('vapor-max-x'),
     styleTags: ['futuristic', 'sporty', 'performance', 'running'],
     occasionTags: ['athletic', 'casual', 'everyday'],
     features: ['reactive cushioning', 'lightweight', 'breathable mesh'],
   },
   {
-    id: '2',
+    id: 'cyber-classic',
     name: 'Cyber Classic',
     description: 'A fusion of retro aesthetics and modern cybernetic design.',
     price: 9499,
-    imageUrl: 'https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?auto=format&fit=crop&w=600&q=80',
+    imageUrl: getPlaceholderImage('cyber-classic'),
     styleTags: ['retro', 'cyberpunk', 'streetwear', 'classic'],
     occasionTags: ['casual', 'urban', 'fashion'],
     features: ['durable sole', 'comfort fit', 'sleek design'],
   },
   {
-    id: '3',
+    id: 'volt-runner',
     name: 'Volt Runner',
     description: 'Electrifying speed and comfort with adaptive lighting elements.',
     price: 14200,
-    imageUrl: 'https://images.unsplash.com/photo-1584486520270-19eca1efcce5?auto=format&fit=crop&w=600&q=80',
+    imageUrl: getPlaceholderImage('volt-runner'),
     styleTags: ['modern', 'athletic', 'glow', 'running'],
     occasionTags: ['athletic', 'night out', 'statement'],
     features: ['adaptive lighting', 'energy return', 'flexible upper'],
   },
   {
-    id: '4',
+    id: 'jordan-peak',
     name: 'Jordan Peak',
     description: 'Elevated design for peak performance and style, inspired by iconic basketball shoes.',
     price: 19999,
-    imageUrl: 'https://images.unsplash.com/photo-1605348532760-6753d2c43329?auto=format&fit=crop&w=600&q=80',
+    imageUrl: getPlaceholderImage('jordan-peak'),
     styleTags: ['iconic', 'basketball', 'premium', 'streetwear'],
     occasionTags: ['athletic', 'casual', 'fashion'],
     features: ['high-top support', 'air cushioning', 'durable construction'],
   },
   {
-    id: '5',
+    id: 'ultra-l01',
     name: 'ULTRA L-01',
     description: 'The pinnacle of propulsion technology, designed for extreme agility.',
     price: 24999,
-    imageUrl: 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&w=800&q=80',
+    imageUrl: getPlaceholderImage('ultra-l01'),
     styleTags: ['futuristic', 'performance', 'high-tech', 'minimalist'],
     occasionTags: ['athletic', 'training'],
     features: ['propulsion system', 'ultra-lightweight', 'aerodynamic design'],
   },
   {
-    id: '6',
+    id: 'dark-matter',
     name: 'DARK MATTER',
-    description: 'Stealthy design with carbon fiber weave for unparalleled durability and strength.',n    price: 18500,
-    imageUrl: 'https://images.unsplash.com/photo-1551107643-404395679f18?auto=format&fit=crop&w=800&q=80',
+    description: 'Stealthy design with carbon fiber weave for unparalleled durability and strength.',
+    price: 18500,
+    imageUrl: getPlaceholderImage('dark-matter'),
     styleTags: ['stealth', 'carbon fiber', 'durable', 'modern'],
     occasionTags: ['rugged', 'casual', 'urban'],
     features: ['carbon fiber weave', 'reinforced sole', 'weather-resistant'],
   },
   {
-    id: '7',
+    id: 'neon-gen',
     name: 'NEON GEN',
     description: 'Adaptive lighting that reacts to your environment, making every step a statement.',
     price: 21999,
-    imageUrl: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=800&q=80',
+    imageUrl: getPlaceholderImage('neon-gen'),
     styleTags: ['neon', 'adaptive', 'statement', 'futuristic'],
     occasionTags: ['party', 'nightlife', 'fashion'],
     features: ['programmable LEDs', 'responsive design', 'comfort fit'],

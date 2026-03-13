@@ -24,6 +24,30 @@
       "description": "NEON GEN adaptive lighting sneaker",
       "imageUrl": "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=800&q=80",
       "imageHint": "glow sneaker"
+    },
+    {
+      "id": "vapor-max-x",
+      "description": "Vapor Max-X performance sneaker",
+      "imageUrl": "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=600&q=80",
+      "imageHint": "sporty sneaker"
+    },
+    {
+      "id": "cyber-classic",
+      "description": "Cyber Classic retro sneaker",
+      "imageUrl": "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?auto=format&fit=crop&w=600&q=80",
+      "imageHint": "retro sneaker"
+    },
+    {
+      "id": "volt-runner",
+      "description": "Volt Runner athletic sneaker",
+      "imageUrl": "https://images.unsplash.com/photo-1584486520270-19eca1efcce5?auto=format&fit=crop&w=600&q=80",
+      "imageHint": "modern sneaker"
+    },
+    {
+      "id": "jordan-peak",
+      "description": "Jordan Peak high-top sneaker",
+      "imageUrl": "https://images.unsplash.com/photo-1605348532760-6753d2c43329?auto=format&fit=crop&w=600&q=80",
+      "imageHint": "iconic sneaker"
     }
   ]
 }

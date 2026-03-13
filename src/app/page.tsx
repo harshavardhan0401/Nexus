@@ -8,6 +8,7 @@ import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Zap, Shield, Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import { getPlaceholderImage, getPlaceholderHint } from '@/lib/placeholder-images';
 
 const FEATURED_PRODUCTS = [
   {
@@ -15,7 +16,8 @@ const FEATURED_PRODUCTS = [
     name: 'ULTRA L-01',
     price: 24999,
     description: 'Propulsion System',
-    imageUrl: 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&w=800&q=80',
+    imageUrl: getPlaceholderImage('ultra-l01'),
+    imageHint: getPlaceholderHint('ultra-l01'),
     color: 'hsl(var(--primary))'
   },
   {
@@ -23,7 +25,8 @@ const FEATURED_PRODUCTS = [
     name: 'DARK MATTER',
     price: 18500,
     description: 'Carbon Fiber Weave',
-    imageUrl: 'https://images.unsplash.com/photo-1551107643-404395679f18?auto=format&fit=crop&w=800&q=80',
+    imageUrl: getPlaceholderImage('dark-matter'),
+    imageHint: getPlaceholderHint('dark-matter'),
     color: 'hsl(var(--secondary))'
   },
   {
@@ -31,35 +34,40 @@ const FEATURED_PRODUCTS = [
     name: 'NEON GEN',
     price: 21999,
     description: 'Adaptive Lighting',
-    imageUrl: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=800&q=80',
+    imageUrl: getPlaceholderImage('neon-gen'),
+    imageHint: getPlaceholderHint('neon-gen'),
     color: 'hsl(var(--primary))'
   },
 ];
 
 const COLLECTION = [
   {
-    id: '1',
+    id: 'vapor-max-x',
     name: 'Vapor Max-X',
     price: 12999,
-    imageUrl: 'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=600&q=80'
+    imageUrl: getPlaceholderImage('vapor-max-x'),
+    imageHint: getPlaceholderHint('vapor-max-x')
   },
   {
-    id: '2',
+    id: 'cyber-classic',
     name: 'Cyber Classic',
     price: 9499,
-    imageUrl: 'https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?auto=format&fit=crop&w=600&q=80'
+    imageUrl: getPlaceholderImage('cyber-classic'),
+    imageHint: getPlaceholderHint('cyber-classic')
   },
   {
-    id: '3',
+    id: 'volt-runner',
     name: 'Volt Runner',
     price: 14200,
-    imageUrl: 'https://images.unsplash.com/photo-1584486520270-19eca1efcce5?auto=format&fit=crop&w=600&q=80'
+    imageUrl: getPlaceholderImage('volt-runner'),
+    imageHint: getPlaceholderHint('volt-runner')
   },
   {
-    id: '4',
+    id: 'jordan-peak',
     name: 'Jordan Peak',
     price: 19999,
-    imageUrl: 'https://images.unsplash.com/photo-1605348532760-6753d2c43329?auto=format&fit=crop&w=600&q=80'
+    imageUrl: getPlaceholderImage('jordan-peak'),
+    imageHint: getPlaceholderHint('jordan-peak')
   }
 ];
 
@@ -79,12 +87,12 @@ export default function Home() {
         <div className="relative z-10 w-full max-w-4xl px-6 flex flex-col items-center">
           <div className="relative w-full aspect-[4/3] drop-shadow-[0_0_50px_rgba(0,242,255,0.3)] animate-float transition-transform hover:scale-110 duration-700">
             <Image
-              src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1000&q=80"
+              src={getPlaceholderImage('hero-shoe')}
               alt="Hero Shoe"
               fill
               className="object-contain rotate-[-15deg]"
               priority
-              data-ai-hint="futuristic sneaker"
+              data-ai-hint={getPlaceholderHint('hero-shoe')}
             />
           </div>
           <div className="mt-8 flex flex-col items-center text-center space-y-4">
@@ -121,7 +129,7 @@ export default function Home() {
                 <h3 className="text-4xl md:text-7xl font-headline font-black mb-4 group-hover:text-primary transition-colors">{product.name}</h3>
                 <p className="text-2xl font-headline text-secondary mb-8">₹{product.price.toLocaleString()}</p>
                 <Button 
-                  onClick={() => addToCart({ ...product, quantity: 1 })}
+                  onClick={() => addToCart({ id: product.id, name: product.name, price: product.price, imageUrl: product.imageUrl, quantity: 1 })}
                   className="w-fit border-primary text-primary font-headline tracking-widest"
                   variant="outline"
                 >
@@ -134,7 +142,7 @@ export default function Home() {
                   alt={product.name}
                   fill
                   className="object-contain rotate-[-20deg]"
-                  data-ai-hint="neon sneaker"
+                  data-ai-hint={product.imageHint}
                 />
               </div>
             </div>
@@ -167,13 +175,13 @@ export default function Home() {
                   alt={product.name}
                   fill
                   className="object-contain drop-shadow-xl"
-                  data-ai-hint="futuristic sneaker"
+                  data-ai-hint={product.imageHint}
                 />
               </div>
               <h3 className="font-headline text-lg mb-2">{product.name}</h3>
               <p className="text-primary font-bold text-xl mb-6">₹{product.price.toLocaleString()}</p>
               <Button 
-                onClick={() => addToCart({ ...product, quantity: 1 })}
+                onClick={() => addToCart({ id: product.id, name: product.name, price: product.price, imageUrl: product.imageUrl, quantity: 1 })}
                 className="w-full font-headline tracking-tighter hover:bg-glow text-[0.7rem]"
                 variant="outline"
               >
