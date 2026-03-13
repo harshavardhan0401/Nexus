@@ -1,14 +1,14 @@
-
 "use client";
 
-import { useEffect, useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import Image from 'next/image';
 import Navbar from '@/components/layout/Navbar';
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Zap, Shield, Sparkles } from 'lucide-react';
+import { ArrowRight, Zap, Shield, Sparkles, Mail, Github, Twitter, Instagram } from 'lucide-react';
 import Link from 'next/link';
 import { getPlaceholderImage, getPlaceholderHint } from '@/lib/placeholder-images';
+import { useToast } from '@/hooks/use-toast';
 
 const FEATURED_PRODUCTS = [
   {
@@ -18,7 +18,6 @@ const FEATURED_PRODUCTS = [
     description: 'Propulsion System',
     imageUrl: getPlaceholderImage('ultra-l01'),
     imageHint: getPlaceholderHint('ultra-l01'),
-    color: 'hsl(var(--primary))'
   },
   {
     id: 'dark-matter',
@@ -27,7 +26,6 @@ const FEATURED_PRODUCTS = [
     description: 'Carbon Fiber Weave',
     imageUrl: getPlaceholderImage('dark-matter'),
     imageHint: getPlaceholderHint('dark-matter'),
-    color: 'hsl(var(--secondary))'
   },
   {
     id: 'neon-gen',
@@ -36,7 +34,6 @@ const FEATURED_PRODUCTS = [
     description: 'Adaptive Lighting',
     imageUrl: getPlaceholderImage('neon-gen'),
     imageHint: getPlaceholderHint('neon-gen'),
-    color: 'hsl(var(--primary))'
   },
 ];
 
@@ -73,33 +70,48 @@ const COLLECTION = [
 
 export default function Home() {
   const { addToCart } = useCart();
+  const { toast } = useToast();
   const showcaseRef = useRef<HTMLDivElement>(null);
 
+  const handleAddToCart = (product: any) => {
+    addToCart({ id: product.id, name: product.name, price: product.price, imageUrl: product.imageUrl, quantity: 1 });
+    toast({
+      title: "NEURAL LINK ESTABLISHED",
+      description: `${product.name} ADDED TO CARGO MANIFEST`,
+      className: "bg-card border-primary text-primary font-headline uppercase text-[0.7rem] tracking-widest",
+    });
+  };
+
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen relative">
+      <div className="particles-bg" />
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        <h1 className="absolute font-headline font-black text-[15vw] leading-none hero-title-stroke select-none pointer-events-none z-0">
-          ADVANCED
+      <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
+        <h1 className="absolute font-headline font-black text-[18vw] leading-none hero-title-stroke select-none pointer-events-none z-0 opacity-20">
+          NEO-STEP
         </h1>
-        <div className="relative z-10 w-full max-w-4xl px-6 flex flex-col items-center">
-          <div className="relative w-full aspect-[4/3] drop-shadow-[0_0_50px_rgba(0,242,255,0.3)] animate-float transition-transform hover:scale-110 duration-700">
+        <div className="relative z-10 w-full max-w-5xl px-6 flex flex-col items-center">
+          <div className="relative w-full aspect-[16/9] drop-shadow-[0_0_80px_rgba(0,242,255,0.4)] animate-float transition-transform hover:scale-105 duration-1000 ease-out">
             <Image
               src={getPlaceholderImage('hero-shoe')}
               alt="Hero Shoe"
               fill
-              className="object-contain rotate-[-15deg]"
+              className="object-contain rotate-[-15deg] brightness-110"
               priority
               data-ai-hint={getPlaceholderHint('hero-shoe')}
             />
           </div>
-          <div className="mt-8 flex flex-col items-center text-center space-y-4">
-            <p className="font-headline text-primary tracking-[0.5em] text-sm">ELITE PROPULSION SYSTEMS</p>
-            <Button size="lg" className="bg-primary text-background font-headline tracking-widest hover:bg-glow" asChild>
+          <div className="mt-4 flex flex-col items-center text-center space-y-6">
+            <div className="space-y-2">
+              <p className="font-headline text-primary tracking-[0.8em] text-xs uppercase animate-pulse">Neural Propulsion Active</p>
+              <h2 className="text-4xl md:text-6xl font-black text-white drop-shadow-sm">FUTURE OF <span className="text-primary text-glow italic">STANCE</span></h2>
+            </div>
+            <Button size="lg" className="bg-primary text-background font-headline tracking-widest hover:bg-glow h-16 px-12 group" asChild>
               <Link href="/collections">
-                ENTER THE CORE <ArrowRight className="ml-2 w-4 h-4" />
+                INITIALIZE CORE <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-2 transition-transform" />
               </Link>
             </Button>
           </div>
@@ -107,41 +119,43 @@ export default function Home() {
       </section>
 
       {/* Horizontal Showcase */}
-      <section className="bg-card py-24 overflow-hidden">
-        <div className="px-6 md:px-12 mb-12 flex justify-between items-end">
+      <section id="drops" className="bg-card/30 py-32 relative">
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+        <div className="px-6 md:px-12 mb-16 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
           <div>
-            <p className="text-primary tracking-[0.3em] font-headline text-xs mb-2">FUTURE DROPS</p>
-            <h2 className="text-4xl md:text-6xl font-headline font-black">SHOWCASE</h2>
+            <p className="text-primary tracking-[0.5em] font-headline text-[0.6rem] mb-4">DISTRICT_DROPS // v2.024</p>
+            <h2 className="text-5xl md:text-8xl font-black">THE SHOWCASE</h2>
           </div>
+          <p className="text-muted-foreground font-headline text-xs tracking-widest max-w-xs">LIMITED RESOURCE ALLOCATION. SECURE ACCESS IMMEDIATELY.</p>
         </div>
         
         <div 
           ref={showcaseRef}
-          className="flex gap-8 px-6 md:px-12 overflow-x-auto no-scrollbar pb-12 snap-x snap-mandatory"
+          className="flex gap-10 px-6 md:px-12 overflow-x-auto no-scrollbar pb-16 snap-x snap-mandatory"
         >
           {FEATURED_PRODUCTS.map((product) => (
             <div 
               key={product.id}
-              className="min-w-[85vw] md:min-w-[60vw] h-[50vh] md:h-[70vh] bg-background/50 border border-white/5 rounded-[3rem] p-12 relative overflow-hidden group snap-center"
+              className="min-w-[90vw] md:min-w-[65vw] h-[60vh] md:h-[75vh] bg-background/40 border border-white/5 rounded-[4rem] p-12 relative overflow-hidden group snap-center hover:border-primary/20 transition-all duration-700 tilt-card"
             >
               <div className="relative z-10 h-full flex flex-col justify-center max-w-md">
-                <p className="text-primary font-headline tracking-[0.4em] text-xs uppercase mb-2">{product.description}</p>
-                <h3 className="text-4xl md:text-7xl font-headline font-black mb-4 group-hover:text-primary transition-colors">{product.name}</h3>
-                <p className="text-2xl font-headline text-secondary mb-8">₹{product.price.toLocaleString()}</p>
+                <p className="text-primary font-headline tracking-[0.4em] text-[0.65rem] uppercase mb-4 opacity-70">{product.description}</p>
+                <h3 className="text-5xl md:text-8xl font-headline font-black mb-6 group-hover:text-primary transition-colors leading-none">{product.name}</h3>
+                <p className="text-3xl font-headline text-secondary mb-10 tracking-tighter">₹{product.price.toLocaleString()}</p>
                 <Button 
-                  onClick={() => addToCart({ id: product.id, name: product.name, price: product.price, imageUrl: product.imageUrl, quantity: 1 })}
-                  className="w-fit border-primary text-primary font-headline tracking-widest"
+                  onClick={() => handleAddToCart(product)}
+                  className="w-fit h-14 px-8 border-primary text-primary font-headline tracking-widest hover:bg-primary hover:text-background"
                   variant="outline"
                 >
-                  ACQUIRE NOW
+                  SECURE CARGO
                 </Button>
               </div>
-              <div className="absolute top-0 right-[-10%] w-[120%] h-full pointer-events-none group-hover:scale-110 transition-transform duration-1000">
+              <div className="absolute top-0 right-[-10%] w-[130%] h-full pointer-events-none group-hover:scale-110 group-hover:rotate-0 transition-all duration-1000 ease-out">
                 <Image 
                   src={product.imageUrl} 
                   alt={product.name}
                   fill
-                  className="object-contain rotate-[-20deg]"
+                  className="object-contain rotate-[-25deg] drop-shadow-[0_35px_35px_rgba(0,0,0,0.5)]"
                   data-ai-hint={product.imageHint}
                 />
               </div>
@@ -151,84 +165,158 @@ export default function Home() {
       </section>
 
       {/* Grid Collection */}
-      <section className="py-24 px-6 md:px-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16 items-end">
+      <section id="collection" className="py-32 px-6 md:px-12 bg-background">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 mb-24 items-end">
           <div>
-            <p className="text-primary tracking-[0.3em] font-headline text-xs mb-2">2024 DROP</p>
-            <h2 className="text-4xl md:text-7xl font-headline font-black">COLLECTION</h2>
+            <p className="text-primary tracking-[0.4em] font-headline text-[0.65rem] mb-4">NEURAL_STREET // COLLECTION</p>
+            <h2 className="text-5xl md:text-8xl font-black">CATALOGUE</h2>
           </div>
-          <p className="text-muted-foreground text-sm max-width-md">
-            Every pair is engineered for maximum performance and street presence. 
-            Experience the next generation of footwear technology.
-          </p>
+          <div className="space-y-6">
+            <p className="text-muted-foreground text-sm uppercase tracking-widest leading-loose">
+              Synthesized materials. Reactive comfort. Neural link compatibility. NeoStride brings the future of athletic propulsion to the current timeline.
+            </p>
+            <div className="h-0.5 w-24 bg-primary" />
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-20">
           {COLLECTION.map((product) => (
             <div 
               key={product.id} 
-              className="bg-card p-8 rounded-[2rem] border border-transparent hover:border-primary/30 transition-all group relative mt-12"
+              className="bg-card/40 p-10 rounded-[3rem] border border-white/5 hover:border-primary/40 transition-all group relative mt-20 tilt-card"
             >
-              <div className="relative aspect-square -mt-20 mb-6 transition-transform duration-500 group-hover:scale-125 group-hover:rotate-[-10deg]">
+              <div className="relative aspect-square -mt-32 mb-8 transition-all duration-700 group-hover:scale-125 group-hover:rotate-[-12deg] group-hover:drop-shadow-[0_0_30px_rgba(0,242,255,0.4)]">
                 <Image 
                   src={product.imageUrl} 
                   alt={product.name}
                   fill
-                  className="object-contain drop-shadow-xl"
+                  className="object-contain"
                   data-ai-hint={product.imageHint}
                 />
               </div>
-              <h3 className="font-headline text-lg mb-2">{product.name}</h3>
-              <p className="text-primary font-bold text-xl mb-6">₹{product.price.toLocaleString()}</p>
+              <h3 className="font-headline text-xl mb-3 tracking-tight">{product.name}</h3>
+              <p className="text-primary font-bold text-2xl mb-8">₹{product.price.toLocaleString()}</p>
               <Button 
-                onClick={() => addToCart({ id: product.id, name: product.name, price: product.price, imageUrl: product.imageUrl, quantity: 1 })}
-                className="w-full font-headline tracking-tighter hover:bg-glow text-[0.7rem]"
+                onClick={() => handleAddToCart(product)}
+                className="w-full h-14 font-headline tracking-tighter hover:bg-glow text-[0.75rem] border-white/10 group"
                 variant="outline"
               >
-                INITIALIZE PURCHASE
+                ACQUIRE <ArrowRight className="ml-2 w-4 h-4 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
               </Button>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Features */}
-      <section className="py-24 bg-card/30">
-        <div className="px-6 md:px-12 grid grid-cols-1 md:grid-cols-3 gap-12">
-          <div className="flex flex-col items-center text-center p-8 border border-white/5 rounded-3xl bg-background/20 backdrop-blur hover:border-primary/20 transition-all">
-            <Zap className="w-12 h-12 text-primary mb-6" />
-            <h4 className="font-headline mb-4 tracking-widest">PROPULSION</h4>
-            <p className="text-muted-foreground text-sm">Advanced energy return systems integrated within the midsole for peak athletic performance.</p>
+      {/* Features - High Tech Display */}
+      <section className="py-32 bg-card/10 relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid-white/[0.02] pointer-events-none" />
+        <div className="px-6 md:px-12 grid grid-cols-1 md:grid-cols-3 gap-12 relative z-10">
+          <div className="group flex flex-col items-center text-center p-12 border border-white/5 rounded-[3rem] bg-background/40 backdrop-blur-xl hover:border-primary/40 transition-all duration-500">
+            <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
+              <Zap className="w-10 h-10 text-primary group-hover:text-glow" />
+            </div>
+            <h4 className="font-headline text-xl mb-6 tracking-widest">PROPULSION X</h4>
+            <p className="text-muted-foreground text-sm leading-relaxed tracking-wide">Kinetic energy recovery system providing up to 98% return on every stride.</p>
           </div>
-          <div className="flex flex-col items-center text-center p-8 border border-white/5 rounded-3xl bg-background/20 backdrop-blur hover:border-primary/20 transition-all">
-            <Shield className="w-12 h-12 text-primary mb-6" />
-            <h4 className="font-headline mb-4 tracking-widest">SHIELD TECH</h4>
-            <p className="text-muted-foreground text-sm">Nano-weave outer layers providing unprecedented durability and weather resistance in any environment.</p>
+          <div className="group flex flex-col items-center text-center p-12 border border-white/5 rounded-[3rem] bg-background/40 backdrop-blur-xl hover:border-primary/40 transition-all duration-500">
+            <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
+              <Shield className="w-10 h-10 text-primary group-hover:text-glow" />
+            </div>
+            <h4 className="font-headline text-xl mb-6 tracking-widest">NEURAL ARMOUR</h4>
+            <p className="text-muted-foreground text-sm leading-relaxed tracking-wide">Carbon-fiber nanoweave providing total environmental protection with zero weight.</p>
           </div>
-          <div className="flex flex-col items-center text-center p-8 border border-white/5 rounded-3xl bg-background/20 backdrop-blur hover:border-primary/20 transition-all">
-            <Sparkles className="w-12 h-12 text-primary mb-6" />
-            <h4 className="font-headline mb-4 tracking-widest">ADAPTIVE LITE</h4>
-            <p className="text-muted-foreground text-sm">Smart LED matrix that reacts to your environment and pace, controllable via the Neural Link app.</p>
+          <div className="group flex flex-col items-center text-center p-12 border border-white/5 rounded-[3rem] bg-background/40 backdrop-blur-xl hover:border-primary/40 transition-all duration-500">
+            <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
+              <Sparkles className="w-10 h-10 text-primary group-hover:text-glow" />
+            </div>
+            <h4 className="font-headline text-xl mb-6 tracking-widest">ILLUMINATE SYNC</h4>
+            <p className="text-muted-foreground text-sm leading-relaxed tracking-wide">Smart-LED arrays that react to your pace and environment via neural connection.</p>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-24 px-6 md:px-12 border-t border-white/5 bg-background">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-12">
-          <div>
-            <div className="font-headline font-black text-4xl text-primary mb-4">NEO-STEP</div>
-            <p className="text-muted-foreground max-w-sm">The future of movement is here. Engineered for those who never stop moving.</p>
+      {/* Login CTA - Neural Access */}
+      <section className="py-40 px-6 relative overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+        <div className="max-w-4xl mx-auto text-center space-y-10 relative z-10">
+          <p className="font-headline text-primary tracking-[0.5em] text-xs uppercase">Restricted Access District</p>
+          <h2 className="text-6xl md:text-9xl font-black leading-none">NEURAL <span className="text-primary text-glow">OVERRIDE</span></h2>
+          <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto uppercase tracking-widest leading-relaxed">
+            Sign in to unlock exclusive neural-drops, personalized style synthesis, and accelerated checkout protocols.
+          </p>
+          <Button asChild size="lg" className="h-20 px-16 bg-primary text-background font-headline text-xl tracking-[0.3em] hover:bg-glow group">
+            <Link href="/login">
+              INITIALIZE LOGIN <ArrowRight className="ml-4 w-6 h-6 group-hover:translate-x-2 transition-transform" />
+            </Link>
+          </Button>
+        </div>
+      </section>
+
+      {/* Footer - Final Frontier */}
+      <footer className="py-32 px-6 md:px-12 border-t border-white/5 bg-black/40 backdrop-blur-3xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-30" />
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-20">
+          <div className="space-y-8 lg:col-span-1">
+            <div className="font-headline font-black text-4xl text-primary tracking-widest">NEO-STEP</div>
+            <p className="text-muted-foreground uppercase text-xs tracking-widest leading-loose">
+              The future of movement is a neural-physical hybrid. Engineered for those who never stop.
+            </p>
+            <div className="flex gap-6">
+              {[Twitter, Instagram, Github].map((Icon, i) => (
+                <Link key={i} href="#" className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:border-primary hover:text-primary transition-all group">
+                  <Icon className="w-5 h-5 group-hover:scale-110" />
+                </Link>
+              ))}
+            </div>
           </div>
-          <div className="flex gap-12 font-headline text-xs tracking-widest">
-            <Link href="#" className="hover:text-primary transition-colors">TWITTER</Link>
-            <Link href="#" className="hover:text-primary transition-colors">INSTAGRAM</Link>
-            <Link href="#" className="hover:text-primary transition-colors">DISCORD</Link>
+
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:col-span-2 gap-12">
+            <div className="space-y-6">
+              <h5 className="font-headline text-[0.65rem] text-primary tracking-[0.4em] uppercase">Operations</h5>
+              <ul className="space-y-4 text-xs tracking-widest uppercase font-headline">
+                <li><Link href="#home" className="text-muted-foreground hover:text-white transition-colors">Base Hub</Link></li>
+                <li><Link href="#drops" className="text-muted-foreground hover:text-white transition-colors">Latest Drops</Link></li>
+                <li><Link href="#collection" className="text-muted-foreground hover:text-white transition-colors">Neural Catalog</Link></li>
+                <li><Link href="/lab" className="text-muted-foreground hover:text-white transition-colors">The Lab</Link></li>
+              </ul>
+            </div>
+            <div className="space-y-6">
+              <h5 className="font-headline text-[0.65rem] text-primary tracking-[0.4em] uppercase">Support</h5>
+              <ul className="space-y-4 text-xs tracking-widest uppercase font-headline">
+                <li><Link href="#" className="text-muted-foreground hover:text-white transition-colors">Neural Help</Link></li>
+                <li><Link href="#" className="text-muted-foreground hover:text-white transition-colors">Ship Protocols</Link></li>
+                <li><Link href="#" className="text-muted-foreground hover:text-white transition-colors">Security Rules</Link></li>
+                <li><Link href="#" className="text-muted-foreground hover:text-white transition-colors">Warranty Link</Link></li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="space-y-8">
+            <h5 className="font-headline text-[0.65rem] text-primary tracking-[0.4em] uppercase">Newsletter Update</h5>
+            <div className="relative group">
+              <input 
+                type="email" 
+                placeholder="NEURAL_ID@HOST.COM" 
+                className="w-full h-16 bg-white/5 border border-white/10 rounded-2xl px-6 text-xs font-headline tracking-widest focus:outline-none focus:border-primary transition-colors"
+              />
+              <button className="absolute right-2 top-2 h-12 w-12 bg-primary text-background rounded-xl flex items-center justify-center hover:bg-glow transition-all">
+                <Mail className="w-5 h-5" />
+              </button>
+            </div>
+            <p className="text-[0.6rem] text-muted-foreground uppercase tracking-widest leading-relaxed">
+              By subscribing, you authorize neural data synchronization for personalized updates.
+            </p>
           </div>
         </div>
-        <div className="mt-24 pt-8 border-t border-white/5 flex justify-between items-center text-[0.6rem] text-muted-foreground tracking-[0.2em] uppercase">
+        
+        <div className="mt-32 pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-[0.6rem] text-muted-foreground tracking-[0.3em] uppercase font-headline">
           <p>© 2024 NEO-STEP // DESIGNED IN THE NEON DISTRICT</p>
-          <p>TERMS / PRIVACY / NEURAL-LINK</p>
+          <div className="flex gap-10">
+            <Link href="#" className="hover:text-white">PROTOCOLS</Link>
+            <Link href="#" className="hover:text-white">NEURAL_PRIVACY</Link>
+            <Link href="#" className="hover:text-white">ACCESS_TERMS</Link>
+          </div>
         </div>
       </footer>
 
@@ -240,12 +328,10 @@ export default function Home() {
           -ms-overflow-style: none;
           scrollbar-width: none;
         }
-        @keyframes float {
-          0%, 100% { transform: translateY(0) rotate(-15deg); }
-          50% { transform: translateY(-20px) rotate(-10deg); }
-        }
-        .animate-float {
-          animation: float 6s ease-in-out infinite;
+        .bg-grid-white {
+          background-size: 40px 40px;
+          background-image: linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
+                            linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
         }
       `}</style>
     </main>
