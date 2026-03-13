@@ -1,0 +1,741 @@
+{
+  "entities": {
+    "UserProfile": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserProfile",
+      "type": "object",
+      "description": "Represents a user's profile information, excluding sensitive authentication data which is handled by an external system.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the UserProfile entity."
+        },
+        "firstName": {
+          "type": "string",
+          "description": "The first name of the user."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "The last name of the user."
+        },
+        "email": {
+          "type": "string",
+          "description": "The primary email address of the user, used for communication and notifications.",
+          "format": "email"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the user profile was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the user profile was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "firstName",
+        "lastName",
+        "email",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Address": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Address",
+      "type": "object",
+      "description": "Represents a physical address associated with a user or an order, used for shipping and billing.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Address entity."
+        },
+        "userProfileId": {
+          "type": "string",
+          "description": "Reference to the UserProfile this address belongs to. (Relationship: UserProfile 1:N Address)"
+        },
+        "recipientName": {
+          "type": "string",
+          "description": "The name of the recipient for this address."
+        },
+        "addressLine1": {
+          "type": "string",
+          "description": "The first line of the street address."
+        },
+        "addressLine2": {
+          "type": "string",
+          "description": "The second line of the street address (optional)."
+        },
+        "city": {
+          "type": "string",
+          "description": "The city of the address."
+        },
+        "stateProvince": {
+          "type": "string",
+          "description": "The state or province of the address."
+        },
+        "postalCode": {
+          "type": "string",
+          "description": "The postal or zip code of the address."
+        },
+        "country": {
+          "type": "string",
+          "description": "The country of the address."
+        },
+        "isShippingDefault": {
+          "type": "boolean",
+          "description": "Indicates if this is the user's default shipping address."
+        },
+        "isBillingDefault": {
+          "type": "boolean",
+          "description": "Indicates if this is the user's default billing address."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the address was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the address was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userProfileId",
+        "recipientName",
+        "addressLine1",
+        "city",
+        "stateProvince",
+        "postalCode",
+        "country",
+        "isShippingDefault",
+        "isBillingDefault",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Category": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Category",
+      "type": "object",
+      "description": "Represents a classification for products, used for navigation and filtering (e.g., Men, Footwear, Sneakers). Categories can be hierarchical.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Category entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the category (e.g., 'Men', 'Footwear', 'Sneakers')."
+        },
+        "description": {
+          "type": "string",
+          "description": "A brief description of the category."
+        },
+        "parentCategoryId": {
+          "type": "string",
+          "description": "Reference to the parent Category, if this is a sub-category. (Relationship: Category 1:N Category)"
+        },
+        "categoryType": {
+          "type": "string",
+          "description": "The type of category (e.g., 'Gender', 'ProductGroup', 'ProductType') to help with UI organization."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the category was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the category was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "categoryType",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Product": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Product",
+      "type": "object",
+      "description": "Represents an individual footwear product available for sale in the store.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Product entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the product (e.g., 'Vapor Max-X')."
+        },
+        "description": {
+          "type": "string",
+          "description": "A detailed description of the product."
+        },
+        "price": {
+          "type": "number",
+          "description": "The current price of the product."
+        },
+        "mainImageUrl": {
+          "type": "string",
+          "description": "The URL of the primary image for the product.",
+          "format": "uri"
+        },
+        "additionalImageUrls": {
+          "type": "array",
+          "description": "An array of URLs for additional images of the product, showcasing different views.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sku": {
+          "type": "string",
+          "description": "Stock Keeping Unit, a unique code for the product."
+        },
+        "brand": {
+          "type": "string",
+          "description": "The brand of the product (e.g., 'NeoStride', 'Nike')."
+        },
+        "categoryIds": {
+          "type": "array",
+          "description": "References to Categories this product belongs to (e.g., 'Men', 'Footwear', 'Sneakers'). (Relationship: Product N:N Category)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "specifications": {
+          "type": "string",
+          "description": "Detailed specifications of the product, such as materials, features, or dimensions, as a descriptive text."
+        },
+        "stockQuantity": {
+          "type": "number",
+          "description": "The current number of units available in stock."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the product was added to the catalog.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the product information was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "price",
+        "mainImageUrl",
+        "sku",
+        "brand",
+        "categoryIds",
+        "specifications",
+        "stockQuantity",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Cart": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Cart",
+      "type": "object",
+      "description": "Represents a user's shopping cart, containing items selected for purchase.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Cart entity."
+        },
+        "userProfileId": {
+          "type": "string",
+          "description": "Reference to the UserProfile that owns this cart. Can be null for anonymous carts. (Relationship: UserProfile 1:1 Cart)"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the cart was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the cart was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "CartItem": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "CartItem",
+      "type": "object",
+      "description": "Represents a single product entry within a shopping cart, including the quantity.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the CartItem entity."
+        },
+        "cartId": {
+          "type": "string",
+          "description": "Reference to the Cart this item belongs to. (Relationship: Cart 1:N CartItem)"
+        },
+        "productId": {
+          "type": "string",
+          "description": "Reference to the Product added to the cart. (Relationship: Product 1:N CartItem)"
+        },
+        "quantity": {
+          "type": "number",
+          "description": "The quantity of the product in the cart."
+        },
+        "priceAtAddition": {
+          "type": "number",
+          "description": "The price of the product at the time it was added to the cart."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the cart item was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the cart item was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "cartId",
+        "productId",
+        "quantity",
+        "priceAtAddition",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Order": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Order",
+      "type": "object",
+      "description": "Represents a completed transaction or purchase made by a user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Order entity."
+        },
+        "userProfileId": {
+          "type": "string",
+          "description": "Reference to the UserProfile who placed the order. (Relationship: UserProfile 1:N Order)"
+        },
+        "orderDate": {
+          "type": "string",
+          "description": "Timestamp when the order was placed.",
+          "format": "date-time"
+        },
+        "totalAmount": {
+          "type": "number",
+          "description": "The total monetary amount of the order, including shipping and taxes."
+        },
+        "status": {
+          "type": "string",
+          "description": "The current status of the order (e.g., 'pending', 'processing', 'shipped', 'delivered', 'cancelled')."
+        },
+        "shippingAddressId": {
+          "type": "string",
+          "description": "Reference to the Address used for shipping this order. (Relationship: Address 1:N Order)"
+        },
+        "billingAddressId": {
+          "type": "string",
+          "description": "Reference to the Address used for billing this order. (Relationship: Address 1:N Order)"
+        },
+        "paymentConfirmationId": {
+          "type": "string",
+          "description": "Identifier from the external payment system confirming the transaction."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the order record was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the order record was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userProfileId",
+        "orderDate",
+        "totalAmount",
+        "status",
+        "shippingAddressId",
+        "billingAddressId",
+        "paymentConfirmationId",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "OrderItem": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "OrderItem",
+      "type": "object",
+      "description": "Represents a single product item included in a completed order.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the OrderItem entity."
+        },
+        "orderId": {
+          "type": "string",
+          "description": "Reference to the Order this item belongs to. (Relationship: Order 1:N OrderItem)"
+        },
+        "productId": {
+          "type": "string",
+          "description": "Reference to the Product purchased. (Relationship: Product 1:N OrderItem)"
+        },
+        "quantity": {
+          "type": "number",
+          "description": "The quantity of the product purchased in this order item."
+        },
+        "unitPrice": {
+          "type": "number",
+          "description": "The price of a single unit of the product at the time of purchase."
+        },
+        "subtotal": {
+          "type": "number",
+          "description": "The total price for this order item (quantity * unitPrice)."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the order item was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the order item was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "orderId",
+        "productId",
+        "quantity",
+        "unitPrice",
+        "subtotal",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "UserPreference": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserPreference",
+      "type": "object",
+      "description": "Stores user-specific preferences to power personalized recommendations.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the UserPreference entity."
+        },
+        "userProfileId": {
+          "type": "string",
+          "description": "Reference to the UserProfile these preferences belong to. (Relationship: UserProfile 1:1 UserPreference)"
+        },
+        "preferredBrands": {
+          "type": "array",
+          "description": "An array of brand names the user prefers.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "preferredColors": {
+          "type": "array",
+          "description": "An array of color names or hex codes the user prefers for footwear.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "preferredCategoryIds": {
+          "type": "array",
+          "description": "An array of category IDs representing preferred product types or groups (e.g., Sneakers, Men's Footwear). (Relationship: Category N:N UserPreference)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "shoeSize": {
+          "type": "number",
+          "description": "The user's preferred shoe size."
+        },
+        "clothingSize": {
+          "type": "string",
+          "description": "The user's preferred clothing size (e.g., 'M', 'L', 'XL')."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the preferences were created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the preferences were last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userProfileId",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "NewsletterSubscription": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "NewsletterSubscription",
+      "type": "object",
+      "description": "Represents a subscription to the store's newsletter for updates and promotions.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the NewsletterSubscription entity."
+        },
+        "email": {
+          "type": "string",
+          "description": "The email address of the subscriber.",
+          "format": "email"
+        },
+        "subscriptionDate": {
+          "type": "string",
+          "description": "Timestamp when the subscription was made.",
+          "format": "date-time"
+        },
+        "isConfirmed": {
+          "type": "boolean",
+          "description": "Indicates if the email subscription has been confirmed (e.g., via a double opt-in link)."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the subscription record was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the subscription record was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "email",
+        "subscriptionDate",
+        "isConfirmed",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "UserProfile",
+          "schema": {
+            "$ref": "#/backend/entities/UserProfile"
+          },
+          "description": "User's personal profile. The document ID (`userId`) must match `request.auth.uid` for ownership.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique ID of the user, matching Firebase Authentication UID."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/addresses/{addressId}",
+        "definition": {
+          "entityName": "Address",
+          "schema": {
+            "$ref": "#/backend/entities/Address"
+          },
+          "description": "Shipping and billing addresses associated with a user. Includes denormalized 'userProfileId' matching the path 'userId' for authorization independence.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique ID of the user who owns this address."
+            },
+            {
+              "name": "addressId",
+              "description": "The unique ID of the address document."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/categories/{categoryId}",
+        "definition": {
+          "entityName": "Category",
+          "schema": {
+            "$ref": "#/backend/entities/Category"
+          },
+          "description": "Product classification categories (e.g., Men, Footwear, Sneakers). These are publicly readable for navigation and filtering, and managed by administrators.",
+          "params": [
+            {
+              "name": "categoryId",
+              "description": "The unique ID of the category."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/products/{productId}",
+        "definition": {
+          "entityName": "Product",
+          "schema": {
+            "$ref": "#/backend/entities/Product"
+          },
+          "description": "Individual footwear products available for sale. These are publicly readable for display, and managed by administrators.",
+          "params": [
+            {
+              "name": "productId",
+              "description": "The unique ID of the product."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/cart",
+        "definition": {
+          "entityName": "Cart",
+          "schema": {
+            "$ref": "#/backend/entities/Cart"
+          },
+          "description": "The authenticated user's singleton shopping cart. The document ID is a fixed value (e.g., 'current' or 'active'). Includes denormalized 'userProfileId' matching the path 'userId' for authorization independence. Anonymous carts are handled client-side or in a separate collection if strictly needed in Firestore.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique ID of the user who owns this cart."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/cart/items/{cartItemId}",
+        "definition": {
+          "entityName": "CartItem",
+          "schema": {
+            "$ref": "#/backend/entities/CartItem"
+          },
+          "description": "Individual items within an authenticated user's shopping cart. Includes denormalized 'userProfileId' and 'cartId' for authorization independence.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique ID of the user who owns this cart item."
+            },
+            {
+              "name": "cartItemId",
+              "description": "The unique ID of the cart item document."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/orders/{orderId}",
+        "definition": {
+          "entityName": "Order",
+          "schema": {
+            "$ref": "#/backend/entities/Order"
+          },
+          "description": "A user's placed order. Includes denormalized 'userProfileId' matching the path 'userId' for authorization independence.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique ID of the user who placed this order."
+            },
+            {
+              "name": "orderId",
+              "description": "The unique ID of the order document."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/orders/{orderId}/items/{orderItemId}",
+        "definition": {
+          "entityName": "OrderItem",
+          "schema": {
+            "$ref": "#/backend/entities/OrderItem"
+          },
+          "description": "Individual items within a user's order. Includes denormalized 'userProfileId' and 'orderId' for authorization independence.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique ID of the user who owns this order item."
+            },
+            {
+              "name": "orderId",
+              "description": "The unique ID of the parent order."
+            },
+            {
+              "name": "orderItemId",
+              "description": "The unique ID of the order item document."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/preferences",
+        "definition": {
+          "entityName": "UserPreference",
+          "schema": {
+            "$ref": "#/backend/entities/UserPreference"
+          },
+          "description": "User-specific preferences for personalized recommendations. The document ID is a fixed value (e.g., 'settings'). Includes denormalized 'userProfileId' matching the path 'userId' for authorization independence.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique ID of the user who owns these preferences."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/newsletterSubscriptions/{subscriptionId}",
+        "definition": {
+          "entityName": "NewsletterSubscription",
+          "schema": {
+            "$ref": "#/backend/entities/NewsletterSubscription"
+          },
+          "description": "Records for newsletter subscriptions. Publicly writable for new subscriptions, but read/update/delete access is restricted to administrators.",
+          "params": [
+            {
+              "name": "subscriptionId",
+              "description": "The unique ID of the newsletter subscription."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed following the core principles of Authorization Independence, Structural Segregation, and DBAC. For user-specific data, a hierarchical path structure centered around `/users/{userId}` is utilized, which inherently provides path-based ownership. \n\n**Authorization Independence (CRITICAL):**\nTo eliminate the need for `get()` calls in security rules and enable atomic operations, crucial authorization context is denormalized directly into relevant documents. For all subcollections under `/users/{userId}/...` (e.g., `addresses`, `cart/items`, `orders`, `orders/{orderId}/items`, `preferences`), the `userProfileId` field is included in the document data. This allows security rules to directly verify `resource.data.userProfileId == request.auth.uid` without needing to inspect parent documents, ensuring that a document's ownership is self-contained and verifiable.\n\n**Structural Segregation (Homogeneous Security Posture):**\nCollections are segregated based on their security posture. Publicly accessible and globally managed entities like `Category` and `Product` reside in top-level collections (`/categories`, `/products`) accessible to all authenticated or unauthenticated users for read operations. User-owned, private data (e.g., `UserProfile`, `Address`, `Cart`, `Order`, `UserPreference`) are nested under `/users/{userId}`, ensuring that all documents within these subcollections share the same ownership-based security requirements. The `NewsletterSubscription` collection is designed for public `create` access (anyone can subscribe) but restricted `read/update/delete` access (admin-only), reflecting a distinct security posture.\n\n**QAPs (Rules are not Filters):**\n1.  **Public Data (`/categories`, `/products`):** These collections are designed to be globally readable. Security rules will simply allow `list: true`, meaning any client can request and receive all documents. The structure avoids mixing public and private data, ensuring that `list` operations always return the full, intended set of data without needing to filter on the client or rely on inefficient server-side filtering via rules.\n2.  **User-Owned Data (`/users/{userId}/addresses`, `/users/{userId}/cart/items`, `/users/{userId}/orders`, `/users/{userId}/orders/{orderId}/items`):** The hierarchical path ensures that `list` operations are inherently scoped to a specific `userId`. Security rules will enforce `allow list: if request.auth.uid == userId;`, where `userId` is the path wildcard. This guarantees that when a user requests a list of their addresses or orders, the database operation is secure and efficient, returning only data owned by the authenticated user, thus supporting QAPs by design.\n\n**DBAC (No Custom Claims):**\nWhile not explicitly requested in the path structure for the provided entities, an implicit `roles_admin/{uid}` collection (or similar) would be used for database-backed access control for managing `Category`, `Product`, and `NewsletterSubscription` entities. This adheres to the principle of storing roles within the database rather than relying on custom claims."
+  }
+}
