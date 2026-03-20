@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from 'next/link';
@@ -53,7 +52,7 @@ const Navbar = () => {
           {/* Logo */}
           <Link href="/" className="group shrink-0">
             <div className="font-headline font-black text-3xl tracking-tighter text-primary group-hover:text-glow transition-all font-audiowide">
-              SNEAKERVERSE
+              THE SHOE ROOM
             </div>
           </Link>
 

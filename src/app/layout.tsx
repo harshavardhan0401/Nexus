@@ -6,7 +6,7 @@ import CustomCursor from '@/components/ui/CustomCursor';
 import { FirebaseClientProvider } from '@/firebase';
 
 export const metadata: Metadata = {
-  title: 'NeoStride // Future Footwear',
+  title: 'The Shoe Room // Future Footwear',
   description: 'Advanced propulsion systems for the urban explorer.',
 };
 
