@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -8,7 +7,7 @@ import { useAuth, useUser, useFirestore } from '@/firebase';
 import { initiateEmailSignIn, initiateEmailSignUp } from '@/firebase/non-blocking-login';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ShieldCheck, Zap, Sparkles, Loader2 } from 'lucide-react';
+import { ArrowLeft, ShieldCheck, Zap, Lock, Mail, Loader2 } from 'lucide-react';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 export default function LoginPage() {
@@ -22,17 +21,14 @@ export default function LoginPage() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Redirect if already logged in and ensure profile exists
   useEffect(() => {
     if (user && !isUserLoading) {
       if (db) {
         const userRef = doc(db, 'users', user.uid);
-        // Ensure profile exists on every login (idempotent)
         setDoc(userRef, {
           id: user.uid,
           email: user.email,
           updatedAt: serverTimestamp(),
-          // Don't overwrite firstName/lastName if they already exist
         }, { merge: true }).then(() => {
           router.push('/');
         });
@@ -45,14 +41,14 @@ export default function LoginPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) return;
-    
+
+    // Protorype Hardcoded Credentials Logic (Simulated with real Firebase sign-in/up)
     setLoading(true);
     if (isSignUp) {
       initiateEmailSignUp(auth, email, password);
     } else {
       initiateEmailSignIn(auth, email, password);
     }
-    // Note: Success is handled by the useEffect above monitoring auth state
   };
 
   if (isUserLoading) {
@@ -65,64 +61,70 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-white font-body flex items-center justify-center p-6 relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/20 blur-[150px] rounded-full" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-secondary/10 blur-[150px] rounded-full" />
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/10 blur-[150px] rounded-full" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-secondary/5 blur-[150px] rounded-full" />
       </div>
 
       <div className="max-w-md w-full relative z-10 animate-in fade-in zoom-in duration-700">
-        <div className="bg-card/40 backdrop-blur-3xl p-10 md:p-14 rounded-[3.5rem] border border-primary/20 shadow-2xl space-y-10 relative overflow-hidden">
+        <div className="bg-card/40 backdrop-blur-3xl p-10 md:p-14 rounded-[4rem] border border-primary/20 shadow-[0_0_100px_rgba(0,0,0,0.8)] space-y-12 relative overflow-hidden">
           <div className="text-center space-y-4">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-2xl mb-4 border border-primary/20">
-              <ShieldCheck className="w-8 h-8 text-primary" />
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-primary/10 rounded-[2rem] mb-6 border border-primary/20 group hover:scale-110 transition-transform duration-500">
+              <ShieldCheck className="w-10 h-10 text-primary group-hover:text-glow" />
             </div>
-            <h1 className="text-4xl font-headline font-black tracking-widest uppercase">
+            <h1 className="text-4xl font-headline font-black tracking-[0.2em] uppercase font-audiowide">
               {isSignUp ? 'Registration' : 'Access'} <span className="text-primary text-glow">Portal</span>
             </h1>
-            <p className="text-muted-foreground text-xs font-headline tracking-widest uppercase opacity-70">
-              {isSignUp ? 'Synthesize New Identity' : 'Initialize Neural Authentication'}
+            <p className="text-muted-foreground text-[0.65rem] font-headline tracking-[0.3em] uppercase opacity-60">
+              {isSignUp ? 'SYNTHeSIZE NEW IDENTITY' : 'INITIALIZE NEURAL AUTHENTICATION'}
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-8">
             <div className="space-y-4">
-              <Input
-                type="email"
-                placeholder="NEURAL ID (EMAIL)"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="h-14 bg-white/5 border-white/10 rounded-xl font-headline text-[0.7rem] tracking-widest px-6 focus:border-primary"
-                required
-              />
-              <Input
-                type="password"
-                placeholder="SECURITY PASSCODE"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="h-14 bg-white/5 border-white/10 rounded-xl font-headline text-[0.7rem] tracking-widest px-6 focus:border-primary"
-                required
-              />
+              <div className="relative group">
+                <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                <Input
+                  type="email"
+                  placeholder="NEURAL ID (EMAIL)"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="h-16 bg-white/5 border-white/10 rounded-2xl font-headline text-[0.7rem] tracking-widest pl-14 pr-6 focus:border-primary transition-all"
+                  required
+                />
+              </div>
+              <div className="relative group">
+                <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                <Input
+                  type="password"
+                  placeholder="SECURITY PASSCODE"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="h-16 bg-white/5 border-white/10 rounded-2xl font-headline text-[0.7rem] tracking-widest pl-14 pr-6 focus:border-primary transition-all"
+                  required
+                />
+              </div>
             </div>
 
             <Button 
               type="submit" 
               disabled={loading}
-              className="w-full h-16 bg-primary text-background font-headline text-sm tracking-[0.3em] uppercase hover:bg-glow"
+              className="w-full h-20 bg-primary text-background font-headline text-lg tracking-[0.4em] uppercase hover:bg-glow rounded-2xl shadow-[0_0_30px_rgba(0,242,255,0.2)]"
             >
-              {loading ? <Loader2 className="animate-spin" /> : (isSignUp ? 'Register Hub' : 'Initialize Login')}
-              {!loading && <Zap className="ml-2 w-4 h-4 fill-current" />}
+              {loading ? <Loader2 className="animate-spin" /> : (isSignUp ? 'REQuEST ACCESS' : 'INITIALIZE')}
+              {!loading && <Zap className="ml-3 w-5 h-5 fill-current" />}
             </Button>
           </form>
 
-          <div className="pt-8 border-t border-white/5 space-y-4 text-center">
+          <div className="pt-10 border-t border-white/5 space-y-6 text-center">
             <button 
               onClick={() => setIsSignUp(!isSignUp)}
-              className="text-[0.6rem] font-headline tracking-widest text-primary/80 hover:text-primary uppercase block w-full"
+              className="text-[0.65rem] font-headline tracking-[0.3em] text-primary/80 hover:text-primary uppercase block w-full transition-colors"
             >
               {isSignUp ? 'Existing Identity? Sign In' : 'Request New Access Card (Sign Up)'}
             </button>
-            <Link href="/" className="inline-flex items-center gap-2 text-[0.6rem] font-headline tracking-widest text-muted-foreground hover:text-white uppercase transition-colors">
-              <ArrowLeft className="w-3 h-3" /> Return to Strategic Hub
+            <Link href="/" className="inline-flex items-center gap-3 text-[0.6rem] font-headline tracking-[0.4em] text-muted-foreground hover:text-white uppercase transition-all">
+              <ArrowLeft className="w-3 h-3" /> RETURN TO DISTRICT
             </Link>
           </div>
         </div>

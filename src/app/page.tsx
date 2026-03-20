@@ -1,16 +1,27 @@
 "use client";
 
-import { useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import Navbar from '@/components/layout/Navbar';
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Zap, Shield, Sparkles, Mail, Github, Twitter, Instagram, Cpu, Activity } from 'lucide-react';
+import { 
+  ArrowRight, Zap, Shield, Sparkles, Mail, Github, Twitter, Instagram, 
+  Cpu, Activity, Play, Filter, Edit3, Lock 
+} from 'lucide-react';
 import Link from 'next/link';
 import { getPlaceholderImage, getPlaceholderHint } from '@/lib/placeholder-images';
 import { useToast } from '@/hooks/use-toast';
+import { useUser } from '@/firebase';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-const FEATURED_PRODUCTS = [
+const INITIAL_FEATURED_PRODUCTS = [
   {
     id: 'ultra-l01',
     name: 'ULTRA L-01',
@@ -40,7 +51,7 @@ const FEATURED_PRODUCTS = [
   },
 ];
 
-const COLLECTION = [
+const INITIAL_COLLECTION = [
   {
     id: 'vapor-max-x',
     name: 'Vapor Max-X',
@@ -78,16 +89,50 @@ const COLLECTION = [
 export default function Home() {
   const { addToCart } = useCart();
   const { toast } = useToast();
-  const showcaseRef = useRef<HTMLDivElement>(null);
+  const { user } = useUser();
+  const [featuredProducts, setFeaturedProducts] = useState(INITIAL_FEATURED_PRODUCTS);
+  const [collection, setCollection] = useState(INITIAL_COLLECTION);
+  const [sortOrder, setSortOrder] = useState<string>('default');
+
+  const isAdmin = user?.email === 'admin@gmail.com';
 
   const handleAddToCart = (product: any) => {
     addToCart({ id: product.id, name: product.name, price: product.price, imageUrl: product.imageUrl, quantity: 1 });
     toast({
       title: "NEURAL LINK ESTABLISHED",
       description: `${product.name} ADDED TO CARGO MANIFEST`,
-      className: "bg-card border-primary text-primary font-headline uppercase text-[0.7rem] tracking-widest",
+      className: "bg-card border-primary text-primary font-headline uppercase text-[0.7rem] tracking-widest shadow-[0_0_20px_rgba(0,242,255,0.2)]",
     });
   };
+
+  const handleEditProduct = (productId: string, isFeatured: boolean) => {
+    const list = isFeatured ? featuredProducts : collection;
+    const product = list.find(p => p.id === productId);
+    if (!product) return;
+
+    const newName = prompt("Enter new product name:", product.name);
+    const newPriceStr = prompt("Enter new product price:", product.price.toString());
+    const newPrice = newPriceStr ? parseInt(newPriceStr) : product.price;
+
+    if (newName && !isNaN(newPrice)) {
+      if (isFeatured) {
+        setFeaturedProducts(prev => prev.map(p => p.id === productId ? { ...p, name: newName, price: newPrice } : p));
+      } else {
+        setCollection(prev => prev.map(p => p.id === productId ? { ...p, name: newName, price: newPrice } : p));
+      }
+      toast({
+        title: "MANIFEST UPDATED",
+        description: `PRODUCT ${productId} PARAMETERS RE-SYNTHESIZED`,
+        className: "bg-card border-secondary text-secondary font-headline uppercase text-[0.7rem] tracking-widest",
+      });
+    }
+  };
+
+  const sortedCollection = [...collection].sort((a, b) => {
+    if (sortOrder === 'low-to-high') return a.price - b.price;
+    if (sortOrder === 'high-to-low') return b.price - a.price;
+    return 0;
+  });
 
   return (
     <main className="min-h-screen relative">
@@ -96,85 +141,100 @@ export default function Home() {
 
       {/* Hero Section */}
       <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
-        <h1 className="absolute font-headline font-black text-[18vw] leading-none hero-title-stroke select-none pointer-events-none z-0 opacity-20">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/10 via-transparent to-transparent pointer-events-none" />
+        <h1 className="absolute font-headline font-black text-[18vw] leading-none hero-title-stroke select-none pointer-events-none z-0 opacity-10">
           NEO-STEP
         </h1>
-        <div className="relative z-10 w-full max-w-5xl px-6 flex flex-col items-center">
-          <div className="relative w-full aspect-[16/9] drop-shadow-[0_0_80px_rgba(0,242,255,0.4)] animate-float transition-transform hover:scale-105 duration-1000 ease-out">
+        <div className="relative z-10 w-full max-w-6xl px-6 flex flex-col lg:flex-row items-center justify-between gap-12">
+          <div className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-8 max-w-xl">
+            <div className="space-y-4">
+              <p className="font-headline text-primary tracking-[0.8em] text-xs uppercase animate-pulse flex items-center gap-2">
+                <span className="w-2 h-2 bg-primary rounded-full animate-ping" />
+                Neural Propulsion Active
+              </p>
+              <h2 className="text-5xl md:text-8xl font-black text-white leading-tight font-audiowide">
+                FUTURE OF <span className="text-primary text-glow italic">STANCE</span>
+              </h2>
+              <p className="text-muted-foreground text-sm uppercase tracking-[0.2em] leading-relaxed max-w-md opacity-70">
+                Engineered for the neon-lit districts. Propulsion systems that react to your neural impulses.
+              </p>
+            </div>
+            <Button size="lg" className="bg-primary text-background font-headline tracking-widest hover:bg-glow h-20 px-16 group text-lg rounded-2xl" asChild>
+              <Link href="/collections">
+                INITIALIZE CORE <ArrowRight className="ml-2 w-6 h-6 group-hover:translate-x-2 transition-transform" />
+              </Link>
+            </Button>
+          </div>
+
+          <div className="relative w-full aspect-square max-w-xl drop-shadow-[0_0_100px_rgba(0,242,255,0.3)] animate-float transition-transform hover:scale-110 duration-1000 ease-out">
+             <div className="absolute -inset-4 bg-primary/5 blur-3xl rounded-full animate-pulse" />
             <Image
               src={getPlaceholderImage('hero-shoe')}
               alt="Hero Shoe"
               fill
-              className="object-contain rotate-[-15deg] brightness-110"
+              className="object-contain rotate-[-15deg] brightness-125"
               priority
               data-ai-hint={getPlaceholderHint('hero-shoe')}
             />
-          </div>
-          <div className="mt-4 flex flex-col items-center text-center space-y-6">
-            <div className="space-y-2">
-              <p className="font-headline text-primary tracking-[0.8em] text-xs uppercase animate-pulse">Neural Propulsion Active</p>
-              <h2 className="text-4xl md:text-6xl font-black text-white drop-shadow-sm">FUTURE OF <span className="text-primary text-glow italic">STANCE</span></h2>
-            </div>
-            <Button size="lg" className="bg-primary text-background font-headline tracking-widest hover:bg-glow h-16 px-12 group" asChild>
-              <Link href="/collections">
-                INITIALIZE CORE <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-2 transition-transform" />
-              </Link>
-            </Button>
           </div>
         </div>
       </section>
 
       {/* Horizontal Showcase */}
-      <section id="drops" className="bg-card/30 py-32 relative">
-        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
-        <div className="px-6 md:px-12 mb-16 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-          <div>
+      <section id="drops" className="bg-card/20 py-32 relative border-y border-white/5">
+        <div className="px-6 md:px-12 mb-20 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+          <div className="space-y-4">
             <p className="text-primary tracking-[0.5em] font-headline text-[0.6rem] mb-4">DISTRICT_DROPS // v2.025</p>
-            <h2 className="text-5xl md:text-8xl font-black">THE SHOWCASE</h2>
+            <h2 className="text-5xl md:text-8xl font-black font-audiowide">THE SHOWCASE</h2>
           </div>
-          <p className="text-muted-foreground font-headline text-xs tracking-widest max-w-xs">LIMITED RESOURCE ALLOCATION. SECURE ACCESS IMMEDIATELY.</p>
+          <p className="text-muted-foreground font-headline text-xs tracking-widest max-w-xs opacity-60">LIMITED RESOURCE ALLOCATION. SECURE ACCESS IMMEDIATELY.</p>
         </div>
         
-        <div 
-          ref={showcaseRef}
-          className="flex gap-10 px-6 md:px-12 overflow-x-auto no-scrollbar pb-16 snap-x snap-mandatory"
-        >
-          {FEATURED_PRODUCTS.map((product) => (
+        <div className="flex gap-12 px-6 md:px-12 overflow-x-auto no-scrollbar pb-16 snap-x snap-mandatory">
+          {featuredProducts.map((product) => (
             <div 
               key={product.id}
-              className="min-w-[90vw] md:min-w-[65vw] h-[60vh] md:h-[75vh] bg-background/40 border border-white/5 rounded-[4rem] p-12 relative overflow-hidden group snap-center hover:border-primary/20 transition-all duration-700 tilt-card"
+              className="min-w-[85vw] md:min-w-[60vw] h-[65vh] md:h-[80vh] bg-background/40 border border-white/5 rounded-[4rem] p-12 relative overflow-hidden group snap-center hover:border-primary/20 transition-all duration-700 tilt-card"
             >
               <div className="relative z-20 h-full flex flex-col justify-center max-w-md">
-                <p className="text-primary font-headline tracking-[0.4em] text-[0.65rem] uppercase mb-4 opacity-70">{product.description}</p>
-                <h3 className="text-5xl md:text-8xl font-headline font-black mb-6 group-hover:text-primary transition-colors leading-none">{product.name}</h3>
+                {isAdmin && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="absolute top-0 left-0 text-secondary hover:text-secondary-foreground gap-2 font-headline text-[0.6rem] tracking-widest mb-4"
+                    onClick={() => handleEditProduct(product.id, true)}
+                  >
+                    <Edit3 className="w-3 h-3" /> RE-WRITE PARAMS
+                  </Button>
+                )}
+                <p className="text-primary font-headline tracking-[0.4em] text-[0.65rem] uppercase mb-4 opacity-70 mt-8">{product.description}</p>
+                <h3 className="text-4xl md:text-7xl font-headline font-black mb-6 group-hover:text-primary transition-colors leading-none font-audiowide">{product.name}</h3>
                 
-                {/* Neural Spec Tags */}
                 <div className="flex flex-wrap gap-2 mb-8">
                   {product.specs?.map((spec, i) => (
-                    <span key={i} className="text-[0.5rem] font-headline tracking-widest px-3 py-1 bg-primary/10 border border-primary/20 rounded-full text-primary/80">
+                    <span key={i} className="text-[0.55rem] font-headline tracking-widest px-4 py-2 bg-primary/10 border border-primary/20 rounded-full text-primary/80">
                       {spec}
                     </span>
                   ))}
                 </div>
 
-                <p className="text-3xl font-headline text-secondary mb-10 tracking-tighter animate-pulse-neon">₹{product.price.toLocaleString()}</p>
+                <p className="text-4xl font-headline text-secondary mb-12 tracking-tighter animate-pulse-neon font-audiowide">₹{product.price.toLocaleString()}</p>
                 <Button 
                   onClick={() => handleAddToCart(product)}
-                  className="w-fit h-14 px-8 border-primary text-primary font-headline tracking-widest hover:bg-primary hover:text-background"
+                  className="w-fit h-16 px-12 border-primary text-primary font-headline tracking-widest hover:bg-primary hover:text-background rounded-2xl text-lg"
                   variant="outline"
                 >
                   SECURE CARGO
                 </Button>
               </div>
               
-              <div className="absolute top-0 right-[-10%] w-[130%] h-full pointer-events-none group-hover:scale-110 transition-all duration-1000 ease-out z-10">
+              <div className="absolute top-0 right-[-15%] w-[120%] h-full pointer-events-none group-hover:scale-105 transition-all duration-1000 ease-out z-10">
                 <div className="scanline group-hover:block hidden" />
                 <Image 
                   src={product.imageUrl} 
                   alt={product.name}
                   fill
-                  className="object-contain rotate-[-25deg] drop-shadow-[0_35px_35px_rgba(0,0,0,0.5)] group-hover:rotate-0 transition-transform duration-1000"
+                  className="object-contain rotate-[-20deg] drop-shadow-[0_40px_60px_rgba(0,0,0,0.6)] group-hover:rotate-0 transition-transform duration-1000"
                   data-ai-hint={product.imageHint}
                 />
               </div>
@@ -184,27 +244,45 @@ export default function Home() {
       </section>
 
       {/* Grid Collection */}
-      <section id="collection" className="py-32 px-6 md:px-12 bg-background">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 mb-24 items-end">
-          <div>
-            <p className="text-primary tracking-[0.4em] font-headline text-[0.65rem] mb-4">NEURAL_STREET // COLLECTION</p>
-            <h2 className="text-5xl md:text-8xl font-black">CATALOGUE</h2>
-          </div>
+      <section id="collection" className="py-32 px-6 md:px-12 bg-background relative overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 mb-24 items-end relative z-10">
           <div className="space-y-6">
-            <p className="text-muted-foreground text-sm uppercase tracking-widest leading-loose">
-              Synthesized materials. Reactive comfort. Neural link compatibility. NeoStride brings the future of athletic propulsion to the current timeline.
-            </p>
-            <div className="h-0.5 w-24 bg-primary" />
+            <p className="text-primary tracking-[0.4em] font-headline text-[0.65rem] mb-4">NEURAL_STREET // COLLECTION</p>
+            <h2 className="text-5xl md:text-8xl font-black font-audiowide">CATALOGUE</h2>
+          </div>
+          
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
+            <div className="flex items-center gap-4 bg-card/40 p-2 rounded-2xl border border-white/5">
+              <Filter className="w-4 h-4 text-primary ml-4" />
+              <Select onValueChange={setSortOrder} defaultValue="default">
+                <SelectTrigger className="w-[200px] border-none bg-transparent font-headline text-[0.7rem] tracking-widest focus:ring-0">
+                  <SelectValue placeholder="SORT BY PRICE" />
+                </SelectTrigger>
+                <SelectContent className="bg-card/95 border-primary/20 backdrop-blur-xl">
+                  <SelectItem value="default" className="font-headline text-[0.6rem] tracking-widest">ORIGINAL SEQUENCE</SelectItem>
+                  <SelectItem value="low-to-high" className="font-headline text-[0.6rem] tracking-widest">MIN → MAX CREDIT</SelectItem>
+                  <SelectItem value="high-to-low" className="font-headline text-[0.6rem] tracking-widest">MAX → MIN CREDIT</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-20">
-          {COLLECTION.map((product) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-24 relative z-10">
+          {sortedCollection.map((product) => (
             <div 
               key={product.id} 
-              className="bg-card/40 p-10 rounded-[3rem] border border-white/5 hover:border-primary/40 transition-all group relative mt-20 tilt-card"
+              className="bg-card/40 p-10 rounded-[3.5rem] border border-white/5 hover:border-primary/40 transition-all group relative mt-20 tilt-card"
             >
-              <div className="relative aspect-square -mt-32 mb-8 transition-all duration-700 group-hover:scale-125 group-hover:rotate-[-12deg] group-hover:drop-shadow-[0_0_30px_rgba(0,242,255,0.4)]">
+              {isAdmin && (
+                <button 
+                  className="absolute top-6 left-6 z-30 text-secondary/50 hover:text-secondary transition-colors"
+                  onClick={() => handleEditProduct(product.id, false)}
+                >
+                  <Edit3 className="w-4 h-4" />
+                </button>
+              )}
+              <div className="relative aspect-square -mt-36 mb-8 transition-all duration-700 group-hover:scale-125 group-hover:rotate-[-10deg] group-hover:drop-shadow-[0_0_40px_rgba(0,242,255,0.4)]">
                 <div className="scanline group-hover:block hidden" />
                 <Image 
                   src={product.imageUrl} 
@@ -214,18 +292,23 @@ export default function Home() {
                   data-ai-hint={product.imageHint}
                 />
               </div>
-              <h3 className="font-headline text-xl mb-3 tracking-tight flex items-center gap-2">
+              <h3 className="font-headline text-xl mb-3 tracking-tight flex items-center gap-2 font-audiowide">
                 <Activity className="w-4 h-4 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                 {product.name}
               </h3>
-              <p className="text-primary font-bold text-2xl mb-8 animate-pulse-neon">₹{product.price.toLocaleString()}</p>
+              <p className="text-primary font-bold text-2xl mb-8 animate-pulse-neon font-audiowide">₹{product.price.toLocaleString()}</p>
               
-              {/* Hover Spec Overlay */}
-              <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-[3rem] pointer-events-none border border-primary/20" />
+              <div className="flex flex-wrap gap-1 mb-6">
+                {product.specs?.map((spec, i) => (
+                  <span key={i} className="text-[0.45rem] font-headline tracking-widest px-2 py-1 bg-white/5 rounded border border-white/10 uppercase opacity-60">
+                    {spec}
+                  </span>
+                ))}
+              </div>
 
               <Button 
                 onClick={() => handleAddToCart(product)}
-                className="w-full h-14 font-headline tracking-tighter hover:bg-glow text-[0.75rem] border-white/10 group relative z-20"
+                className="w-full h-14 font-headline tracking-widest hover:bg-glow text-[0.75rem] border-white/10 group relative z-20 rounded-2xl"
                 variant="outline"
               >
                 ACQUIRE <ArrowRight className="ml-2 w-4 h-4 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
@@ -235,109 +318,113 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features - High Tech Display */}
-      <section className="py-32 bg-card/10 relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid-white/[0.02] pointer-events-none" />
-        <div className="px-6 md:px-12 grid grid-cols-1 md:grid-cols-3 gap-12 relative z-10">
-          <div className="group flex flex-col items-center text-center p-12 border border-white/5 rounded-[3rem] bg-background/40 backdrop-blur-xl hover:border-primary/40 transition-all duration-500">
-            <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform shadow-[0_0_30px_rgba(0,242,255,0.1)]">
-              <Zap className="w-10 h-10 text-primary group-hover:text-glow" />
-            </div>
-            <h4 className="font-headline text-xl mb-6 tracking-widest">PROPULSION X</h4>
-            <p className="text-muted-foreground text-sm leading-relaxed tracking-wide">Kinetic energy recovery system providing up to 98% return on every stride.</p>
+      {/* Sneaker Stories - Video Section */}
+      <section className="py-32 px-6 md:px-12 bg-card/5 relative">
+        <div className="max-w-7xl mx-auto space-y-16">
+          <div className="text-center space-y-4">
+            <p className="text-primary tracking-[0.6em] font-headline text-xs uppercase">NEURAL_BROADCAST // VOD</p>
+            <h2 className="text-5xl md:text-8xl font-black font-audiowide">SNEAKER STORIES</h2>
           </div>
-          <div className="group flex flex-col items-center text-center p-12 border border-white/5 rounded-[3rem] bg-background/40 backdrop-blur-xl hover:border-primary/40 transition-all duration-500">
-            <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform shadow-[0_0_30px_rgba(0,242,255,0.1)]">
-              <Cpu className="w-10 h-10 text-primary group-hover:text-glow" />
-            </div>
-            <h4 className="font-headline text-xl mb-6 tracking-widest">NEURAL ARMOUR</h4>
-            <p className="text-muted-foreground text-sm leading-relaxed tracking-wide">Carbon-fiber nanoweave providing total environmental protection with zero weight.</p>
-          </div>
-          <div className="group flex flex-col items-center text-center p-12 border border-white/5 rounded-[3rem] bg-background/40 backdrop-blur-xl hover:border-primary/40 transition-all duration-500">
-            <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform shadow-[0_0_30px_rgba(0,242,255,0.1)]">
-              <Sparkles className="w-10 h-10 text-primary group-hover:text-glow" />
-            </div>
-            <h4 className="font-headline text-xl mb-6 tracking-widest">ILLUMINATE SYNC</h4>
-            <p className="text-muted-foreground text-sm leading-relaxed tracking-wide">Smart-LED arrays that react to your pace and environment via neural connection.</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            {[
+              { id: '1', title: 'District Propulsion v1', videoId: 'dQw4w9WgXcQ' },
+              { id: '2', title: 'Carbon Nanoweave Field Test', videoId: 'dQw4w9WgXcQ' },
+            ].map((video) => (
+              <div key={video.id} className="relative group rounded-[3rem] overflow-hidden aspect-video border border-white/10 bg-black/40 shadow-2xl">
+                <div className="absolute inset-0 flex items-center justify-center z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 pointer-events-none">
+                  <Play className="w-20 h-20 text-primary fill-current animate-pulse" />
+                </div>
+                <iframe 
+                  className="w-full h-full grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700"
+                  src={`https://www.youtube.com/embed/${video.videoId}?autoplay=0&controls=0&mute=1&loop=1`} 
+                  title={video.title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                />
+                <div className="absolute bottom-8 left-8 z-20">
+                  <h4 className="font-headline text-xl text-white font-black tracking-widest uppercase">{video.title}</h4>
+                  <p className="text-primary font-headline text-[0.6rem] tracking-[0.3em]">LIVE FEED ACTIVE</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Login CTA - Neural Access */}
-      <section className="py-40 px-6 relative overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
-        <div className="max-w-4xl mx-auto text-center space-y-10 relative z-10">
-          <p className="font-headline text-primary tracking-[0.5em] text-xs uppercase">Restricted Access District</p>
-          <h2 className="text-6xl md:text-9xl font-black leading-none">NEURAL <span className="text-primary text-glow">OVERRIDE</span></h2>
-          <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto uppercase tracking-widest leading-relaxed">
-            Sign in to unlock exclusive neural-drops, personalized style synthesis, and accelerated checkout protocols.
+      {/* Login CTA Section */}
+      <section className="py-40 px-6 relative overflow-hidden bg-background border-t border-white/5">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-primary/10 blur-[150px] rounded-full pointer-events-none" />
+        <div className="max-w-5xl mx-auto text-center space-y-12 relative z-10">
+          <Badge variant="outline" className="border-primary text-primary font-headline py-1 px-4 tracking-[0.4em] mb-6">RESTRICTED_ACCESS</Badge>
+          <h2 className="text-6xl md:text-9xl font-black leading-none font-audiowide">EXPLORE <span className="text-primary text-glow">BEYOND</span></h2>
+          <p className="text-muted-foreground text-lg md:text-2xl max-w-3xl mx-auto uppercase tracking-widest leading-loose opacity-80">
+            Sign in to your neural hub to unlock elite drops, prioritized synthesis, and real-time cargo tracking.
           </p>
-          <Button asChild size="lg" className="h-20 px-16 bg-primary text-background font-headline text-xl tracking-[0.3em] hover:bg-glow group shadow-[0_0_50px_rgba(0,242,255,0.2)]">
+          <Button asChild size="lg" className="h-24 px-20 bg-primary text-background font-headline text-2xl tracking-[0.4em] hover:bg-glow group shadow-[0_0_60px_rgba(0,242,255,0.3)] rounded-3xl">
             <Link href="/login">
-              INITIALIZE LOGIN <ArrowRight className="ml-4 w-6 h-6 group-hover:translate-x-2 transition-transform" />
+              NEURAL LOGIN <ArrowRight className="ml-4 w-8 h-8 group-hover:translate-x-3 transition-transform" />
             </Link>
           </Button>
         </div>
       </section>
 
-      {/* Footer - Final Frontier */}
-      <footer className="py-32 px-6 md:px-12 border-t border-white/5 bg-black/40 backdrop-blur-3xl relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-30" />
+      {/* Footer */}
+      <footer className="py-32 px-6 md:px-12 border-t border-white/5 bg-black/60 backdrop-blur-3xl relative">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-20">
-          <div className="space-y-8 lg:col-span-1">
-            <div className="font-headline font-black text-4xl text-primary tracking-widest">NEO-STEP</div>
-            <p className="text-muted-foreground uppercase text-xs tracking-widest leading-loose">
+          <div className="space-y-10 lg:col-span-1">
+            <div className="font-headline font-black text-4xl text-primary tracking-widest font-audiowide">NEO-STEP</div>
+            <p className="text-muted-foreground uppercase text-xs tracking-[0.2em] leading-loose opacity-60">
               The future of movement is a neural-physical hybrid. Engineered for those who never stop.
             </p>
-            <div className="flex gap-6">
+            <div className="flex gap-8">
               {[Twitter, Instagram, Github].map((Icon, i) => (
-                <Link key={i} href="#" className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:border-primary hover:text-primary transition-all group shadow-[0_0_10px_rgba(0,242,255,0.05)]">
-                  <Icon className="w-5 h-5 group-hover:scale-110" />
+                <Link key={i} href="#" className="w-14 h-14 rounded-2xl border border-white/10 flex items-center justify-center hover:border-primary hover:text-primary transition-all group hover:bg-primary/5">
+                  <Icon className="w-6 h-6 group-hover:scale-125 transition-transform" />
                 </Link>
               ))}
             </div>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-2 lg:col-span-2 gap-12">
-            <div className="space-y-6">
-              <h5 className="font-headline text-[0.65rem] text-primary tracking-[0.4em] uppercase">Operations</h5>
+            <div className="space-y-8">
+              <h5 className="font-headline text-[0.7rem] text-primary tracking-[0.5em] uppercase border-b border-primary/20 pb-4">District Map</h5>
               <ul className="space-y-4 text-xs tracking-widest uppercase font-headline">
-                <li><Link href="#home" className="text-muted-foreground hover:text-white transition-colors">Base Hub</Link></li>
-                <li><Link href="#drops" className="text-muted-foreground hover:text-white transition-colors">Latest Drops</Link></li>
-                <li><Link href="#collection" className="text-muted-foreground hover:text-white transition-colors">Neural Catalog</Link></li>
-                <li><Link href="/lab" className="text-muted-foreground hover:text-white transition-colors">The Lab</Link></li>
+                <li><Link href="#home" className="text-muted-foreground hover:text-white transition-colors">Strategic Hub</Link></li>
+                <li><Link href="#drops" className="text-muted-foreground hover:text-white transition-colors">Latest Rations</Link></li>
+                <li><Link href="#collection" className="text-muted-foreground hover:text-white transition-colors">Propulsion Index</Link></li>
+                <li><Link href="/lab" className="text-muted-foreground hover:text-white transition-colors">Neural Lab</Link></li>
               </ul>
             </div>
-            <div className="space-y-6">
-              <h5 className="font-headline text-[0.65rem] text-primary tracking-[0.4em] uppercase">Support</h5>
+            <div className="space-y-8">
+              <h5 className="font-headline text-[0.7rem] text-primary tracking-[0.5em] uppercase border-b border-primary/20 pb-4">Protocols</h5>
               <ul className="space-y-4 text-xs tracking-widest uppercase font-headline">
-                <li><Link href="#" className="text-muted-foreground hover:text-white transition-colors">Neural Help</Link></li>
-                <li><Link href="#" className="text-muted-foreground hover:text-white transition-colors">Ship Protocols</Link></li>
-                <li><Link href="#" className="text-muted-foreground hover:text-white transition-colors">Security Rules</Link></li>
+                <li><Link href="#" className="text-muted-foreground hover:text-white transition-colors">Neural Support</Link></li>
+                <li><Link href="#" className="text-muted-foreground hover:text-white transition-colors">Logistics Hub</Link></li>
+                <li><Link href="#" className="text-muted-foreground hover:text-white transition-colors">Encryption Key</Link></li>
                 <li><Link href="#" className="text-muted-foreground hover:text-white transition-colors">Warranty Link</Link></li>
               </ul>
             </div>
           </div>
 
-          <div className="space-y-8">
-            <h5 className="font-headline text-[0.65rem] text-primary tracking-[0.4em] uppercase">Newsletter Update</h5>
+          <div className="space-y-10">
+            <h5 className="font-headline text-[0.7rem] text-primary tracking-[0.5em] uppercase border-b border-primary/20 pb-4">Neural Pulse</h5>
             <div className="relative group">
               <input 
                 type="email" 
-                placeholder="NEURAL_ID@HOST.COM" 
-                className="w-full h-16 bg-white/5 border border-white/10 rounded-2xl px-6 text-xs font-headline tracking-widest focus:outline-none focus:border-primary transition-colors"
+                placeholder="ID@NEO.COM" 
+                className="w-full h-16 bg-white/5 border border-white/10 rounded-2xl px-6 text-xs font-headline tracking-widest focus:outline-none focus:border-primary transition-all"
               />
               <button className="absolute right-2 top-2 h-12 w-12 bg-primary text-background rounded-xl flex items-center justify-center hover:bg-glow transition-all">
                 <Mail className="w-5 h-5" />
               </button>
             </div>
-            <p className="text-[0.6rem] text-muted-foreground uppercase tracking-widest leading-relaxed">
-              By subscribing, you authorize neural data synchronization for personalized updates.
+            <p className="text-[0.6rem] text-muted-foreground uppercase tracking-widest leading-relaxed opacity-50">
+              By authorizing synchronization, you agree to district-wide data protocols.
             </p>
           </div>
         </div>
         
-        <div className="mt-32 pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-[0.6rem] text-muted-foreground tracking-[0.3em] uppercase font-headline">
+        <div className="mt-32 pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-[0.6rem] text-muted-foreground tracking-[0.4em] uppercase font-headline opacity-60">
           <p>© 2025 NEO-STEP // DESIGNED IN THE NEON DISTRICT</p>
           <div className="flex gap-10">
             <Link href="#" className="hover:text-white">PROTOCOLS</Link>
@@ -348,19 +435,27 @@ export default function Home() {
       </footer>
 
       <style jsx global>{`
-        .no-scrollbar::-webkit-scrollbar {
-          display: none;
+        .particles-bg {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          z-index: -1;
+          background: radial-gradient(circle at 50% 50%, rgba(0, 242, 255, 0.05) 0%, transparent 80%);
+          pointer-events: none;
         }
-        .no-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-        .bg-grid-white {
-          background-size: 40px 40px;
-          background-image: linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
-                            linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
+        .hero-title-stroke {
+          -webkit-text-stroke: 1px rgba(0, 242, 255, 0.2);
+          color: transparent;
         }
       `}</style>
     </main>
   );
 }
+
+const Badge = ({ children, variant, className }: any) => (
+  <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${className}`}>
+    {children}
+  </span>
+);

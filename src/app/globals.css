@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -42,20 +41,27 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-headline uppercase tracking-tighter;
   }
-}
-
-/* God-Level Pro Visual Enhancements */
-.cyber-glass {
-  @apply bg-card/40 backdrop-blur-2xl border border-white/5 shadow-2xl;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+  
+  .font-audiowide {
+    font-family: 'Audiowide', cursive;
+  }
 }
 
 .text-glow {
   text-shadow: 0 0 15px hsla(182, 100%, 50%, 0.6), 0 0 30px hsla(182, 100%, 50%, 0.2);
 }
 
+.text-glow-purple {
+  text-shadow: 0 0 15px hsla(280, 100%, 50%, 0.6), 0 0 30px hsla(280, 100%, 50%, 0.2);
+}
+
 .bg-glow {
   box-shadow: 0 0 25px hsla(182, 100%, 50%, 0.4);
+}
+
+.cyber-glass {
+  @apply bg-card/40 backdrop-blur-2xl border border-white/5 shadow-2xl;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
 }
 
 .tilt-card {
@@ -69,7 +75,6 @@
   box-shadow: 0 20px 50px -10px rgba(0, 242, 255, 0.15);
 }
 
-/* Neural Scanline Effect */
 .scanline {
   @apply absolute inset-0 pointer-events-none opacity-0 transition-opacity duration-300;
   background: linear-gradient(
@@ -98,6 +103,15 @@
 
 .animate-float {
   animation: float 10s ease-in-out infinite;
+}
+
+@keyframes pulse-neon {
+  0%, 100% { opacity: 1; filter: brightness(1); }
+  50% { opacity: 0.8; filter: brightness(1.5); }
+}
+
+.animate-pulse-neon {
+  animation: pulse-neon 2s ease-in-out infinite;
 }
 
 .no-scrollbar::-webkit-scrollbar {
