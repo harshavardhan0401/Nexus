@@ -1,11 +1,11 @@
 "use client";
 
-import { useRef, useEffect } from 'react';
+import { useRef } from 'react';
 import Image from 'next/image';
 import Navbar from '@/components/layout/Navbar';
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Zap, Shield, Sparkles, Mail, Github, Twitter, Instagram } from 'lucide-react';
+import { ArrowRight, Zap, Shield, Sparkles, Mail, Github, Twitter, Instagram, Cpu, Activity } from 'lucide-react';
 import Link from 'next/link';
 import { getPlaceholderImage, getPlaceholderHint } from '@/lib/placeholder-images';
 import { useToast } from '@/hooks/use-toast';
@@ -16,6 +16,7 @@ const FEATURED_PRODUCTS = [
     name: 'ULTRA L-01',
     price: 24999,
     description: 'Propulsion System',
+    specs: ['98% Energy Return', 'Carbon Nanoweave', 'Neural Sync v4'],
     imageUrl: getPlaceholderImage('ultra-l01'),
     imageHint: getPlaceholderHint('ultra-l01'),
   },
@@ -24,6 +25,7 @@ const FEATURED_PRODUCTS = [
     name: 'DARK MATTER',
     price: 18500,
     description: 'Carbon Fiber Weave',
+    specs: ['Zero-Weight Chassis', 'Stealth Tread', 'Impact Shield'],
     imageUrl: getPlaceholderImage('dark-matter'),
     imageHint: getPlaceholderHint('dark-matter'),
   },
@@ -32,6 +34,7 @@ const FEATURED_PRODUCTS = [
     name: 'NEON GEN',
     price: 21999,
     description: 'Adaptive Lighting',
+    specs: ['16M Color Spectrum', 'Biometric Fit', 'Dual-Core LEDs'],
     imageUrl: getPlaceholderImage('neon-gen'),
     imageHint: getPlaceholderHint('neon-gen'),
   },
@@ -42,6 +45,7 @@ const COLLECTION = [
     id: 'vapor-max-x',
     name: 'Vapor Max-X',
     price: 12999,
+    specs: ['Air Flow Max', 'Grip Tech'],
     imageUrl: getPlaceholderImage('vapor-max-x'),
     imageHint: getPlaceholderHint('vapor-max-x')
   },
@@ -49,6 +53,7 @@ const COLLECTION = [
     id: 'cyber-classic',
     name: 'Cyber Classic',
     price: 9499,
+    specs: ['Retro-Fit', 'Dura-Sole'],
     imageUrl: getPlaceholderImage('cyber-classic'),
     imageHint: getPlaceholderHint('cyber-classic')
   },
@@ -56,6 +61,7 @@ const COLLECTION = [
     id: 'volt-runner',
     name: 'Volt Runner',
     price: 14200,
+    specs: ['Energy Cell', 'Flex Upper'],
     imageUrl: getPlaceholderImage('volt-runner'),
     imageHint: getPlaceholderHint('volt-runner')
   },
@@ -63,6 +69,7 @@ const COLLECTION = [
     id: 'jordan-peak',
     name: 'Jordan Peak',
     price: 19999,
+    specs: ['Ankle Lock', 'Pro Cushion'],
     imageUrl: getPlaceholderImage('jordan-peak'),
     imageHint: getPlaceholderHint('jordan-peak')
   }
@@ -123,7 +130,7 @@ export default function Home() {
         <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
         <div className="px-6 md:px-12 mb-16 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
           <div>
-            <p className="text-primary tracking-[0.5em] font-headline text-[0.6rem] mb-4">DISTRICT_DROPS // v2.024</p>
+            <p className="text-primary tracking-[0.5em] font-headline text-[0.6rem] mb-4">DISTRICT_DROPS // v2.025</p>
             <h2 className="text-5xl md:text-8xl font-black">THE SHOWCASE</h2>
           </div>
           <p className="text-muted-foreground font-headline text-xs tracking-widest max-w-xs">LIMITED RESOURCE ALLOCATION. SECURE ACCESS IMMEDIATELY.</p>
@@ -138,10 +145,20 @@ export default function Home() {
               key={product.id}
               className="min-w-[90vw] md:min-w-[65vw] h-[60vh] md:h-[75vh] bg-background/40 border border-white/5 rounded-[4rem] p-12 relative overflow-hidden group snap-center hover:border-primary/20 transition-all duration-700 tilt-card"
             >
-              <div className="relative z-10 h-full flex flex-col justify-center max-w-md">
+              <div className="relative z-20 h-full flex flex-col justify-center max-w-md">
                 <p className="text-primary font-headline tracking-[0.4em] text-[0.65rem] uppercase mb-4 opacity-70">{product.description}</p>
                 <h3 className="text-5xl md:text-8xl font-headline font-black mb-6 group-hover:text-primary transition-colors leading-none">{product.name}</h3>
-                <p className="text-3xl font-headline text-secondary mb-10 tracking-tighter">₹{product.price.toLocaleString()}</p>
+                
+                {/* Neural Spec Tags */}
+                <div className="flex flex-wrap gap-2 mb-8">
+                  {product.specs?.map((spec, i) => (
+                    <span key={i} className="text-[0.5rem] font-headline tracking-widest px-3 py-1 bg-primary/10 border border-primary/20 rounded-full text-primary/80">
+                      {spec}
+                    </span>
+                  ))}
+                </div>
+
+                <p className="text-3xl font-headline text-secondary mb-10 tracking-tighter animate-pulse-neon">₹{product.price.toLocaleString()}</p>
                 <Button 
                   onClick={() => handleAddToCart(product)}
                   className="w-fit h-14 px-8 border-primary text-primary font-headline tracking-widest hover:bg-primary hover:text-background"
@@ -150,12 +167,14 @@ export default function Home() {
                   SECURE CARGO
                 </Button>
               </div>
-              <div className="absolute top-0 right-[-10%] w-[130%] h-full pointer-events-none group-hover:scale-110 group-hover:rotate-0 transition-all duration-1000 ease-out">
+              
+              <div className="absolute top-0 right-[-10%] w-[130%] h-full pointer-events-none group-hover:scale-110 transition-all duration-1000 ease-out z-10">
+                <div className="scanline group-hover:block hidden" />
                 <Image 
                   src={product.imageUrl} 
                   alt={product.name}
                   fill
-                  className="object-contain rotate-[-25deg] drop-shadow-[0_35px_35px_rgba(0,0,0,0.5)]"
+                  className="object-contain rotate-[-25deg] drop-shadow-[0_35px_35px_rgba(0,0,0,0.5)] group-hover:rotate-0 transition-transform duration-1000"
                   data-ai-hint={product.imageHint}
                 />
               </div>
@@ -186,6 +205,7 @@ export default function Home() {
               className="bg-card/40 p-10 rounded-[3rem] border border-white/5 hover:border-primary/40 transition-all group relative mt-20 tilt-card"
             >
               <div className="relative aspect-square -mt-32 mb-8 transition-all duration-700 group-hover:scale-125 group-hover:rotate-[-12deg] group-hover:drop-shadow-[0_0_30px_rgba(0,242,255,0.4)]">
+                <div className="scanline group-hover:block hidden" />
                 <Image 
                   src={product.imageUrl} 
                   alt={product.name}
@@ -194,11 +214,18 @@ export default function Home() {
                   data-ai-hint={product.imageHint}
                 />
               </div>
-              <h3 className="font-headline text-xl mb-3 tracking-tight">{product.name}</h3>
-              <p className="text-primary font-bold text-2xl mb-8">₹{product.price.toLocaleString()}</p>
+              <h3 className="font-headline text-xl mb-3 tracking-tight flex items-center gap-2">
+                <Activity className="w-4 h-4 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+                {product.name}
+              </h3>
+              <p className="text-primary font-bold text-2xl mb-8 animate-pulse-neon">₹{product.price.toLocaleString()}</p>
+              
+              {/* Hover Spec Overlay */}
+              <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-[3rem] pointer-events-none border border-primary/20" />
+
               <Button 
                 onClick={() => handleAddToCart(product)}
-                className="w-full h-14 font-headline tracking-tighter hover:bg-glow text-[0.75rem] border-white/10 group"
+                className="w-full h-14 font-headline tracking-tighter hover:bg-glow text-[0.75rem] border-white/10 group relative z-20"
                 variant="outline"
               >
                 ACQUIRE <ArrowRight className="ml-2 w-4 h-4 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
@@ -213,21 +240,21 @@ export default function Home() {
         <div className="absolute inset-0 bg-grid-white/[0.02] pointer-events-none" />
         <div className="px-6 md:px-12 grid grid-cols-1 md:grid-cols-3 gap-12 relative z-10">
           <div className="group flex flex-col items-center text-center p-12 border border-white/5 rounded-[3rem] bg-background/40 backdrop-blur-xl hover:border-primary/40 transition-all duration-500">
-            <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
+            <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform shadow-[0_0_30px_rgba(0,242,255,0.1)]">
               <Zap className="w-10 h-10 text-primary group-hover:text-glow" />
             </div>
             <h4 className="font-headline text-xl mb-6 tracking-widest">PROPULSION X</h4>
             <p className="text-muted-foreground text-sm leading-relaxed tracking-wide">Kinetic energy recovery system providing up to 98% return on every stride.</p>
           </div>
           <div className="group flex flex-col items-center text-center p-12 border border-white/5 rounded-[3rem] bg-background/40 backdrop-blur-xl hover:border-primary/40 transition-all duration-500">
-            <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
-              <Shield className="w-10 h-10 text-primary group-hover:text-glow" />
+            <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform shadow-[0_0_30px_rgba(0,242,255,0.1)]">
+              <Cpu className="w-10 h-10 text-primary group-hover:text-glow" />
             </div>
             <h4 className="font-headline text-xl mb-6 tracking-widest">NEURAL ARMOUR</h4>
             <p className="text-muted-foreground text-sm leading-relaxed tracking-wide">Carbon-fiber nanoweave providing total environmental protection with zero weight.</p>
           </div>
           <div className="group flex flex-col items-center text-center p-12 border border-white/5 rounded-[3rem] bg-background/40 backdrop-blur-xl hover:border-primary/40 transition-all duration-500">
-            <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
+            <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform shadow-[0_0_30px_rgba(0,242,255,0.1)]">
               <Sparkles className="w-10 h-10 text-primary group-hover:text-glow" />
             </div>
             <h4 className="font-headline text-xl mb-6 tracking-widest">ILLUMINATE SYNC</h4>
@@ -245,7 +272,7 @@ export default function Home() {
           <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto uppercase tracking-widest leading-relaxed">
             Sign in to unlock exclusive neural-drops, personalized style synthesis, and accelerated checkout protocols.
           </p>
-          <Button asChild size="lg" className="h-20 px-16 bg-primary text-background font-headline text-xl tracking-[0.3em] hover:bg-glow group">
+          <Button asChild size="lg" className="h-20 px-16 bg-primary text-background font-headline text-xl tracking-[0.3em] hover:bg-glow group shadow-[0_0_50px_rgba(0,242,255,0.2)]">
             <Link href="/login">
               INITIALIZE LOGIN <ArrowRight className="ml-4 w-6 h-6 group-hover:translate-x-2 transition-transform" />
             </Link>
@@ -264,7 +291,7 @@ export default function Home() {
             </p>
             <div className="flex gap-6">
               {[Twitter, Instagram, Github].map((Icon, i) => (
-                <Link key={i} href="#" className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:border-primary hover:text-primary transition-all group">
+                <Link key={i} href="#" className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:border-primary hover:text-primary transition-all group shadow-[0_0_10px_rgba(0,242,255,0.05)]">
                   <Icon className="w-5 h-5 group-hover:scale-110" />
                 </Link>
               ))}
@@ -311,7 +338,7 @@ export default function Home() {
         </div>
         
         <div className="mt-32 pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-[0.6rem] text-muted-foreground tracking-[0.3em] uppercase font-headline">
-          <p>© 2024 NEO-STEP // DESIGNED IN THE NEON DISTRICT</p>
+          <p>© 2025 NEO-STEP // DESIGNED IN THE NEON DISTRICT</p>
           <div className="flex gap-10">
             <Link href="#" className="hover:text-white">PROTOCOLS</Link>
             <Link href="#" className="hover:text-white">NEURAL_PRIVACY</Link>
