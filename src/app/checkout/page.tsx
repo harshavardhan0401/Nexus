@@ -9,22 +9,75 @@ import { Input } from '@/components/ui/input';
 import { ShieldCheck, Loader2, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useUser, useFirestore } from '@/firebase';
+import { collection, doc, serverTimestamp, writeBatch } from 'firebase/firestore';
 
 export default function CheckoutPage() {
-  const { totalPrice, clearCart } = useCart();
+  const { cart, totalPrice, clearCart } = useCart();
+  const { user } = useUser();
+  const db = useFirestore();
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const router = useRouter();
 
-  const handleCheckout = (e: React.FormEvent) => {
+  const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (cart.length === 0) return;
+    
     setIsProcessing(true);
-    // Simulate payment processing
-    setTimeout(() => {
-      setIsProcessing(false);
+
+    try {
+      if (user && db) {
+        // Record order in Firestore for authenticated users
+        const orderId = `order_${Date.now()}`;
+        const orderRef = doc(db, 'users', user.uid, 'orders', orderId);
+        const batch = writeBatch(db);
+
+        const orderData = {
+          id: orderId,
+          userProfileId: user.uid,
+          orderDate: serverTimestamp(),
+          totalAmount: totalPrice,
+          status: 'processing',
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+          // Mock IDs for prototyping
+          shippingAddressId: 'default_ship',
+          billingAddressId: 'default_bill',
+          paymentConfirmationId: `pay_${Math.random().toString(36).substring(7)}`
+        };
+
+        batch.set(orderRef, orderData);
+
+        // Save order items
+        cart.forEach((item, index) => {
+          const itemRef = doc(db, 'users', user.uid, 'orders', orderId, 'items', `item_${index}`);
+          batch.set(itemRef, {
+            id: `item_${index}`,
+            orderId: orderId,
+            productId: item.id,
+            quantity: item.quantity,
+            unitPrice: item.price,
+            subtotal: item.price * item.quantity,
+            userProfileId: user.uid,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+          });
+        });
+
+        await batch.commit();
+      }
+
+      // Simulate network delay for payment gateway
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
       setIsSuccess(true);
-      clearCart();
-    }, 2500);
+      await clearCart();
+    } catch (error) {
+      console.error("Checkout failed:", error);
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   if (isSuccess) {
@@ -85,7 +138,7 @@ export default function CheckoutPage() {
 
             <Button 
               type="submit" 
-              disabled={isProcessing} 
+              disabled={isProcessing || cart.length === 0} 
               className="w-full h-16 bg-primary text-background font-headline tracking-widest text-lg hover:bg-glow transition-all"
             >
               {isProcessing ? (
@@ -93,7 +146,7 @@ export default function CheckoutPage() {
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" /> AUTHORIZING...
                 </>
               ) : (
-                `CONFIRM ₹${totalPrice.toLocaleString()}`
+                cart.length === 0 ? "CARGO EMPTY" : `CONFIRM ₹${totalPrice.toLocaleString()}`
               )}
             </Button>
           </form>

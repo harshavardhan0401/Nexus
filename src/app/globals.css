@@ -1,135 +1,105 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 180 20% 5%;
+    --background: 180 20% 4%;
     --foreground: 0 0% 100%;
-    --card: 180 20% 7%;
+    --card: 180 20% 6%;
     --card-foreground: 0 0% 100%;
-    --popover: 180 20% 5%;
+    --popover: 180 20% 4%;
     --popover-foreground: 0 0% 100%;
     --primary: 182 100% 50%;
     --primary-foreground: 180 20% 5%;
     --secondary: 150 60% 70%;
     --secondary-foreground: 180 20% 5%;
-    --muted: 180 10% 15%;
-    --muted-foreground: 180 5% 60%;
+    --muted: 180 10% 12%;
+    --muted-foreground: 180 5% 55%;
     --accent: 182 100% 50%;
     --accent-foreground: 180 20% 5%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 180 10% 15%;
-    --input: 180 10% 15%;
+    --border: 180 10% 12%;
+    --input: 180 10% 12%;
     --ring: 182 100% 50%;
-    --radius: 0.75rem;
+    --radius: 1.25rem;
   }
 }
 
 @layer base {
   * {
-    @apply border-border cursor-none;
+    @apply border-border selection:bg-primary selection:text-background;
     scroll-behavior: smooth;
   }
   body {
-    @apply bg-background text-foreground font-body overflow-x-hidden;
+    @apply bg-background text-foreground font-body overflow-x-hidden antialiased;
     background-image: 
-      radial-gradient(circle at 50% 0%, hsla(182, 100%, 50%, 0.1) 0%, transparent 50%),
-      radial-gradient(circle at 0% 50%, hsla(150, 60%, 70%, 0.05) 0%, transparent 40%),
-      radial-gradient(circle at 100% 100%, hsla(182, 100%, 50%, 0.05) 0%, transparent 40%);
+      radial-gradient(circle at 50% -20%, hsla(182, 100%, 50%, 0.15) 0%, transparent 60%),
+      radial-gradient(circle at -10% 50%, hsla(150, 60%, 70%, 0.08) 0%, transparent 40%);
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-headline uppercase tracking-tighter;
   }
 }
 
-/* Futuristic 3D Card Effect */
+/* God-Level Pro Visual Enhancements */
+.cyber-glass {
+  @apply bg-card/40 backdrop-blur-2xl border border-white/5 shadow-2xl;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+}
+
+.text-glow {
+  text-shadow: 0 0 15px hsla(182, 100%, 50%, 0.6), 0 0 30px hsla(182, 100%, 50%, 0.2);
+}
+
+.bg-glow {
+  box-shadow: 0 0 25px hsla(182, 100%, 50%, 0.4);
+}
+
 .tilt-card {
-  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s ease;
   transform-style: preserve-3d;
 }
 
 .tilt-card:hover {
-  transform: translateY(-10px) rotateX(5deg) rotateY(2deg);
+  transform: perspective(1000px) rotateX(4deg) rotateY(2deg) translateY(-8px);
+  @apply border-primary/30;
+  box-shadow: 0 20px 50px -10px rgba(0, 242, 255, 0.15);
 }
 
-.text-glow {
-  text-shadow: 0 0 10px hsla(182, 100%, 50%, 0.8), 0 0 20px hsla(182, 100%, 50%, 0.3);
-}
-
-.bg-glow {
-  box-shadow: 0 0 20px hsla(182, 100%, 50%, 0.5);
-}
-
-.hero-title-stroke {
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.05);
-  color: transparent;
-}
-
-/* Floating Animation */
-@keyframes float {
-  0%, 100% { transform: translateY(0) rotate(-15deg); }
-  50% { transform: translateY(-30px) rotate(-12deg); }
-}
-
-.animate-float {
-  animation: float 8s ease-in-out infinite;
-}
-
-/* Pulse Animation */
-@keyframes neon-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.7; transform: scale(1.02); }
-}
-
-.animate-pulse-neon {
-  animation: neon-pulse 2s infinite ease-in-out;
-}
-
-/* Scanline Overlay */
+/* Neural Scanline Effect */
 .scanline {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: rgba(0, 242, 255, 0.2);
-  z-index: 10;
-  pointer-events: none;
-  animation: scan 3s linear infinite;
+  @apply absolute inset-0 pointer-events-none opacity-0 transition-opacity duration-300;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 242, 255, 0.05) 50%,
+    transparent 100%
+  );
+  background-size: 100% 4px;
+  animation: scan 2s linear infinite;
+}
+
+.group:hover .scanline {
+  @apply opacity-100;
 }
 
 @keyframes scan {
-  from { top: 0; }
-  to { top: 100%; }
+  from { transform: translateY(-100%); }
+  to { transform: translateY(100%); }
 }
 
-/* Particle Background Simulation */
-.particles-bg {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: -1;
-  background-image: radial-gradient(circle at 2px 2px, rgba(0, 242, 255, 0.1) 1px, transparent 0);
-  background-size: 40px 40px;
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(-15deg); }
+  50% { transform: translateY(-25px) rotate(-10deg); }
 }
 
-::-webkit-scrollbar {
-  width: 8px;
+.animate-float {
+  animation: float 10s ease-in-out infinite;
 }
 
-::-webkit-scrollbar-track {
-  @apply bg-background;
-}
-
-::-webkit-scrollbar-thumb {
-  @apply bg-muted rounded-full border-2 border-background;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-primary;
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
