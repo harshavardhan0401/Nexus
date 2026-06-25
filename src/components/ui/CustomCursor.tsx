@@ -41,6 +41,7 @@ const CustomCursor = () => {
         className="fixed top-0 left-0 w-5 h-5 bg-primary rounded-full pointer-events-none z-[9999] mix-blend-difference transition-transform duration-100 ease-out"
         style={{
           transform: `translate(${position.x - 10}px, ${position.y - 10}px) scale(${isHovering ? 2 : 1})`,
+          willChange: 'transform',
         }}
       />
       <div
@@ -48,6 +49,7 @@ const CustomCursor = () => {
         style={{
           transform: `translate(${position.x - 20}px, ${position.y - 20}px) scale(${isHovering ? 1.5 : 1})`,
           opacity: isHovering ? 0.5 : 0.2,
+          willChange: 'transform, opacity',
         }}
       />
     </>

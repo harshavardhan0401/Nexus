@@ -2,8 +2,30 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { CartProvider } from '@/context/CartContext';
 import { Toaster } from '@/components/ui/toaster';
-import CustomCursor from '@/components/ui/CustomCursor';
+import CustomCursorLoader from '@/components/ui/CustomCursorLoader';
 import { FirebaseClientProvider } from '@/firebase';
+import { Inter, Orbitron, Audiowide } from 'next/font/google';
+
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['300', '400', '700'],
+  variable: '--font-inter',
+  display: 'swap',
+});
+
+const orbitron = Orbitron({
+  subsets: ['latin'],
+  weight: ['400', '700', '900'],
+  variable: '--font-orbitron',
+  display: 'swap',
+});
+
+const audiowide = Audiowide({
+  subsets: ['latin'],
+  weight: '400',
+  variable: '--font-audiowide',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'The Shoe Room // Future Footwear',
@@ -16,16 +38,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;700&display=swap" rel="stylesheet" />
-      </head>
+    <html lang="en" className={`${inter.variable} ${orbitron.variable} ${audiowide.variable}`}>
       <body className="font-body antialiased">
         <FirebaseClientProvider>
           <CartProvider>
-            <CustomCursor />
+            <CustomCursorLoader />
             {children}
             <Toaster />
           </CartProvider>

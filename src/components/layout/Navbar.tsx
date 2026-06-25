@@ -1,5 +1,6 @@
 "use client";
 
+import React from 'react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { ShoppingCart, User, Menu, ChevronDown, Shield } from 'lucide-react';
@@ -38,7 +39,7 @@ const NAVIGATION_CATEGORIES = [
   },
 ];
 
-const Navbar = () => {
+const Navbar = React.memo(function Navbar() {
   const { totalItems } = useCart();
   const { user } = useUser();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -128,6 +129,6 @@ const Navbar = () => {
       <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
     </nav>
   );
-};
+});
 
 export default Navbar;

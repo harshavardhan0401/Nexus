@@ -105,6 +105,7 @@ export default function LabPage() {
                       alt={shoe.name}
                       fill
                       className="object-contain drop-shadow-2xl"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       data-ai-hint="futuristic shoe"
                     />
                   </div>

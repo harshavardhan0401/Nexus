@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect, useRef, useCallback } from 'react';
 import { useUser, useFirestore } from '@/firebase';
 import { doc, onSnapshot, updateDoc, setDoc, deleteDoc, collection, query, where, getDocs, writeBatch } from 'firebase/firestore';
 import { updateDocumentNonBlocking, setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
@@ -33,6 +33,18 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isSyncing, setIsSyncing] = useState(false);
 
+  // Debounce timers for Firestore quantity updates
+  const debounceTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+
+  // Cleanup debounce timers on unmount
+  useEffect(() => {
+    const timers = debounceTimers.current;
+    return () => {
+      timers.forEach(timer => clearTimeout(timer));
+      timers.clear();
+    };
+  }, []);
+
   // Sync with Firestore if logged in
   useEffect(() => {
     if (!user || !db) {
@@ -49,7 +61,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }
 
     setIsSyncing(true);
-    const cartRef = doc(db, 'users', user.uid, 'cart', 'active');
     const itemsRef = collection(db, 'users', user.uid, 'cart', 'active', 'items');
 
     const unsubscribe = onSnapshot(itemsRef, (snapshot) => {
@@ -89,7 +100,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [cart, user]);
 
-  const addToCart = (item: Omit<CartItem, 'quantity'>) => {
+  const addToCart = useCallback((item: Omit<CartItem, 'quantity'>) => {
     const existingItem = cart.find((i) => i.id === item.id);
     const newQuantity = existingItem ? existingItem.quantity + 1 : 1;
     const newItem = { ...item, quantity: newQuantity };
@@ -103,37 +114,57 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         : [...prev, newItem]
       );
     }
-  };
+  }, [cart, user, db]);
 
-  const removeFromCart = (id: string) => {
+  const removeFromCart = useCallback((id: string) => {
+    // Clear any pending debounced update for this item
+    const existing = debounceTimers.current.get(id);
+    if (existing) {
+      clearTimeout(existing);
+      debounceTimers.current.delete(id);
+    }
+
     if (user && db) {
       const itemRef = doc(db, 'users', user.uid, 'cart', 'active', 'items', id);
       deleteDoc(itemRef);
     } else {
       setCart((prevCart) => prevCart.filter((item) => item.id !== id));
     }
-  };
+  }, [user, db]);
 
-  const updateQuantity = (id: string, quantity: number) => {
+  const updateQuantity = useCallback((id: string, quantity: number) => {
     if (quantity < 1) {
       removeFromCart(id);
       return;
     }
 
-    const item = cart.find(i => i.id === id);
-    if (!item) return;
+    // Always update local state immediately for responsive UI
+    setCart((prevCart) =>
+      prevCart.map((item) => (item.id === id ? { ...item, quantity } : item))
+    );
 
+    // Debounce Firestore writes for rapid quantity changes
     if (user && db) {
-      const itemRef = doc(db, 'users', user.uid, 'cart', 'active', 'items', id);
-      updateDocumentNonBlocking(itemRef, { quantity });
-    } else {
-      setCart((prevCart) =>
-        prevCart.map((item) => (item.id === id ? { ...item, quantity } : item))
-      );
-    }
-  };
+      const existing = debounceTimers.current.get(id);
+      if (existing) {
+        clearTimeout(existing);
+      }
 
-  const clearCart = async () => {
+      const timer = setTimeout(() => {
+        const itemRef = doc(db, 'users', user.uid, 'cart', 'active', 'items', id);
+        updateDocumentNonBlocking(itemRef, { quantity });
+        debounceTimers.current.delete(id);
+      }, 300);
+
+      debounceTimers.current.set(id, timer);
+    }
+  }, [user, db, removeFromCart]);
+
+  const clearCart = useCallback(async () => {
+    // Clear all pending debounce timers
+    debounceTimers.current.forEach(timer => clearTimeout(timer));
+    debounceTimers.current.clear();
+
     if (user && db) {
       const itemsRef = collection(db, 'users', user.uid, 'cart', 'active', 'items');
       const snapshot = await getDocs(itemsRef);
@@ -143,7 +174,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     } else {
       setCart([]);
     }
-  };
+  }, [user, db]);
 
   const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
   const totalPrice = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);

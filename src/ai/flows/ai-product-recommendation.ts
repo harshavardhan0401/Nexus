@@ -160,6 +160,48 @@ const aiProductRecommendationFlow = ai.defineFlow(
   }
 );
 
+// In-memory LRU cache for AI recommendations
+const CACHE_MAX_SIZE = 20;
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
+interface CacheEntry {
+  data: AIProductRecommendationOutput;
+  timestamp: number;
+}
+
+const recommendationCache = new Map<string, CacheEntry>();
+
+function normalizeDescription(desc: string): string {
+  return desc.trim().toLowerCase().replace(/\s+/g, ' ');
+}
+
+function getCached(key: string): AIProductRecommendationOutput | null {
+  const entry = recommendationCache.get(key);
+  if (!entry) return null;
+  if (Date.now() - entry.timestamp > CACHE_TTL_MS) {
+    recommendationCache.delete(key);
+    return null;
+  }
+  return entry.data;
+}
+
+function setCache(key: string, data: AIProductRecommendationOutput): void {
+  // Evict oldest entry if at capacity
+  if (recommendationCache.size >= CACHE_MAX_SIZE) {
+    const oldestKey = recommendationCache.keys().next().value;
+    if (oldestKey !== undefined) {
+      recommendationCache.delete(oldestKey);
+    }
+  }
+  recommendationCache.set(key, { data, timestamp: Date.now() });
+}
+
 export async function aiProductRecommendation(input: AIProductRecommendationInput): Promise<AIProductRecommendationOutput> {
-  return aiProductRecommendationFlow(input);
+  const cacheKey = normalizeDescription(input.description);
+  const cached = getCached(cacheKey);
+  if (cached) return cached;
+
+  const result = await aiProductRecommendationFlow(input);
+  setCache(cacheKey, result);
+  return result;
 }
