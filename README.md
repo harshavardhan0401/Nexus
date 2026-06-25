@@ -40,7 +40,7 @@ npm run dev
 
 ## Live Demo
 
-https://nexus04.netlify.app/
+https://nexus-sneakers.netlify.app/
 
 ## Author
 
