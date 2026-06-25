@@ -18,12 +18,13 @@ A modern sneaker e-commerce web application built with Next.js featuring AI-powe
 - React
 - TypeScript
 - Tailwind CSS
-- Firebase (if used)
+- Firebase 
 - AI Integration
 
 ## 📸 Screenshots
 
-(Add screenshots here after deployment)
+coming soon
+
 
 ## Installation
 
@@ -39,7 +40,7 @@ npm run dev
 
 ## Live Demo
 
-Coming Soon
+https://nexus04.netlify.app/
 
 ## Author
 
