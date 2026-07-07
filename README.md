@@ -24,6 +24,9 @@ A modern sneaker e-commerce web application built with Next.js featuring AI-powe
 ## 📸 Screenshots
 
 coming soon
+# Home
+<img width="1901" height="922" alt="image" src="https://github.com/user-attachments/assets/b96d14cb-0a9d-4053-a685-d735ee28afeb" />
+
 
 
 ## Installation
