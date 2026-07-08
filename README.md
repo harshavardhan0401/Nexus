@@ -8,7 +8,8 @@ A cyberpunk-themed sneaker e-commerce platform built with Next.js 15, Firebase, 
 
 ---
 
-![Nexus Home](docs/screenshot-home.png)
+<img width="1896" height="916" alt="image" src="https://github.com/user-attachments/assets/175f723b-28b9-46f9-907c-cbfda2b82f33" />
+
 
 ---
 
@@ -145,7 +146,8 @@ npm run lint     # ESLint
 
 | Home | Neural Lab | Cart |
 |------|------------|------|
-| ![Home](docs/screenshot-home.png) | ![Lab](docs/screenshot-lab.png) | ![Cart](docs/screenshot-cart.png) |
+| <img width="1896" height="916" alt="image" src="https://github.com/user-attachments/assets/2970a3d4-fc77-4e6d-948a-4d52193db9f5" />| <img width="1895" height="915" alt="image" src="https://github.com/user-attachments/assets/e8543869-09dd-4ca5-a529-c25048e4bde7" />| <img width="1902" height="912" alt="image" src="https://github.com/user-attachments/assets/959950cc-cd8d-4f2b-b1a2-45979dfdde64" />|
+
 
 ---
 
