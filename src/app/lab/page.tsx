@@ -114,8 +114,8 @@ export default function LabPage() {
                   <div className="flex justify-between items-center mt-auto">
                     <span className="text-xl font-bold text-primary">₹{shoe.price.toLocaleString()}</span>
                     <Button 
-                      onClick={() => addToCart({ id: `${shoe.name}-${idx}`, name: shoe.name, price: shoe.price, imageUrl: shoe.imageUrl, quantity: 1 })}
-                      variant="ghost" 
+                      // ✅ AFTER — remove quantity: 1
+                      onClick={() => addToCart({ id: `${shoe.name}-${idx}`, name: shoe.name, price: shoe.price, imageUrl: shoe.imageUrl })}                      variant="ghost" 
                       className="text-primary hover:bg-primary/10 hover:text-primary p-0 h-auto font-headline text-xs tracking-widest"
                     >
                       ACQUIRE <ArrowRight className="ml-1 w-4 h-4" />

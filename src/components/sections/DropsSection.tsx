@@ -46,7 +46,8 @@ export default function DropsSection() {
   const isAdmin = user?.email === 'admin@gmail.com';
 
   const handleAddToCart = useCallback((product: any) => {
-    addToCart({ id: product.id, name: product.name, price: product.price, imageUrl: product.imageUrl, quantity: 1 });
+    // ✅ AFTER
+addToCart({ id: product.id, name: product.name, price: product.price, imageUrl: product.imageUrl });
     toast({
       title: "NEURAL LINK ESTABLISHED",
       description: `${product.name} ADDED TO CARGO MANIFEST`,
