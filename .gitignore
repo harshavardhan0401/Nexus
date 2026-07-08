@@ -43,3 +43,11 @@ next-env.d.ts
 # firebase
 firebase-debug.log
 firestore-debug.log
+
+# IDE
+.vscode/
+
+# Firebase Studio artifacts
+.agents/
+.idx/
+.modified
